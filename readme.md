@@ -1,8 +1,7 @@
 ## Neural Network Code Planning
 
 
-
-### Training Components
+### Code Structures
 
 1. Argument parser.
 2. Data
@@ -73,3 +72,16 @@ classDiagram
   Experiment --> Runner
   
   ```
+  
+### Python Environment
+
+```bash
+$ make envload # or
+$ conda env create --name python39 --file environment.yml
+```
+
+Following this: https://goodresearch.dev/setup.html
+  
+**For myself**
+1. eval "$(/Users/time/miniconda/bin/conda shell.zsh hook)"
+
