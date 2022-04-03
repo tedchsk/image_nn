@@ -1,5 +1,3 @@
-# Plan for today
-
 ## Neural Network Code Planning
 
 
