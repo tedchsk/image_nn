@@ -14,7 +14,8 @@ class LoggerDefault(LoggerABC):
 
     def __init__(self, save_dir: str, override: bool = False):
 
-        assert os.path.exists(save_dir), \
+        self.override = override
+        assert override or os.path.exists(save_dir), \
             "Directory already exists, please  update the file name or set override=True"
 
         self.save_dir = save_dir
@@ -42,4 +43,3 @@ class LoggerDefault(LoggerABC):
             np.save(f, summarized)
 
         return summarized
-
