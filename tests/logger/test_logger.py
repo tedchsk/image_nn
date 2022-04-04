@@ -5,7 +5,7 @@ from core.logger.default import LoggerDefault
 
 
 def test_logger_default_on_epoch_end():
-    logger = LoggerDefault("")
+    logger = LoggerDefault("", override=True)
     epoch_num = 20
 
     for _ in range(epoch_num):
