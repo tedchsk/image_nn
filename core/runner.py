@@ -16,7 +16,6 @@ from core.model.resnet import ResNet
 
 
 def run(
-        model: ModelABC,
         train_conf: TrainingConfig,
         runname: str=datetime.now().strftime("%y%m%d_%H%M%S"), # Same for each run
         expname: str="untitled" # Different for each configuration
@@ -25,6 +24,7 @@ def run(
 
     data_loaders, dataset_sizes = data_loader_builder(train_conf)
     logger = LoggerDefault(os.path.join("_results", runname, expname))
+    model = train_conf.get_model(**train_conf.model_params)
     loss_fn = nn.CrossEntropyLoss()
     optimizer = train_conf.build_optimizer(model.parameters())
     scheduler = train_conf.build_scheduler(optimizer)

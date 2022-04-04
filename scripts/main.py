@@ -12,26 +12,24 @@ from core.model.model_abc import ModelABC
 from core.model.resnet import ResNet
 from core.runner import run
 
+torch.manual_seed(43)
 
 if __name__ == "__main__":
 
     now_str = datetime.now().strftime("%y%m%d_%H%M%S") # Same for each run
-    conf = TrainingConfig()
 
     if torch.cuda.is_available():
         print("Using GPUs")
         device = torch.device("cuda")
     else:
         device = torch.device("cpu")
-    model = ResNet(model_n=3, device=device).to(device)
 
 
-    train_conf = TrainingConfig(n_early_stopping=-1, milestones=[80])
-    run(model, train_conf, runname=now_str, expname="no_early_stop")
+    train_conf = TrainingConfig(get_model=ResNet, model_params={"model_n": 3, "device": device}, n_early_stopping=-1, milestones=[80])
+    run(train_conf, runname=now_str, expname="no_early_stop")
 
-    train_conf = TrainingConfig(n_early_stopping=5, milestones=[80])
-    run(model, train_conf, runname=now_str, expname="early_stop_5")
-    del model # release model from the GPU (hopefully)
+    train_conf = TrainingConfig(get_model=ResNet, model_params={"model_n": 3, "device": device}, n_early_stopping=5, milestones=[80])
+    run(train_conf, runname=now_str, expname="early_stop_5")
 
-    model2 = ResNet(model_n=5, device=device).to(device)
-    run(model2, train_conf, runname=now_str, expname="model_5")
+    train_conf = TrainingConfig(get_model=ResNet, model_params={"model_n": 5, "device": device}, n_early_stopping=5, milestones=[80])
+    run(train_conf, runname=now_str, expname="model_5")

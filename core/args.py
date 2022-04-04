@@ -1,4 +1,6 @@
 import typing
+from typing import Any, Callable, Dict
+from core.model.model_abc import ModelABC
 import torchvision
 from os import PathLike
 from torch import optim
@@ -10,6 +12,11 @@ from dataclasses import dataclass, field
 @dataclass
 class TrainingConfig:
     """Class for training configuration"""
+
+    # Model specific
+    get_model: Callable[..., ModelABC]
+    model_params: Dict[str, Any]
+
     # Data loader specific
     dataset_builder = D.CIFAR10
     pipelines: List = field(default_factory=list)
