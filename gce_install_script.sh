@@ -14,3 +14,7 @@ source ~/.bashrc
 
 # Project setup
 # Continue from here
+make envload
+miniconda activate python39
+conda install pytorch torchvision torchaudio cudatoolkit=11.3 -c pytorch
+
