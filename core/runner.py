@@ -24,7 +24,7 @@ def run(
     print(f"Start training process of exp: {expname}")
 
     data_loaders, dataset_sizes = data_loader_builder(train_conf)
-    logger = LoggerDefault(os.path.join("_results", runname, expname), conf=train_conf)
+    logger = LoggerDefault(os.path.join("_results", runname, expname))
     loss_fn = nn.CrossEntropyLoss()
     optimizer = train_conf.build_optimizer(model.parameters())
     scheduler = train_conf.build_scheduler(optimizer)
