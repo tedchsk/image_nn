@@ -7,7 +7,7 @@ def test_logger_default_on_epoch_end():
     logger = LoggerDefault("")
     epoch_num = 20
 
-    for i in range(epoch_num):
+    for _ in range(epoch_num):
         logger.on_epoch_end({"acc": 0.2, "train_loss": 0.125})
 
     expected = {
@@ -22,7 +22,7 @@ def test_logger_default_on_training_end(tmpdir):
     # Tmp dir
     logger = LoggerDefault(tmpdir)
 
-    for i in range(20):
+    for _ in range(20):
         logger.on_epoch_end({"acc": 0.2, "train_loss": 0.125})
 
     expected = {

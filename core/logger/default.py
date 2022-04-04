@@ -1,4 +1,5 @@
 import numpy as np
+import os
 from os.path import join
 from collections import defaultdict
 from typing import Dict
@@ -11,8 +12,13 @@ def avg(l):
 
 class LoggerDefault(LoggerABC):
 
-    def __init__(self, save_dir: str):
+    def __init__(self, save_dir: str, override: bool = False):
+
+        assert os.path.exists(save_dir), \
+            "Directory already exists, please  update the file name or set override=True"
+
         self.save_dir = save_dir
+
         self.logs = defaultdict(list)
 
     def on_epoch_end(self, training_info: Dict):

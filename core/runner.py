@@ -6,10 +6,12 @@ import torch.optim as optim
 from core.args import DataConfig
 from core.data_loader import data_loader_builder
 from core.logger.default import LoggerDefault
+from core.logger.logger_abc import LoggerABC
+from core.model.model_abc import ModelABC
 from core.model.resnet import ResNet
 
 
-def evaluate_test_set(test_loader, model):
+def evaluate_test_set(test_loader, model, optimizer, loss_fn):
 
     # evaluating the model with test set
     with torch.no_grad():
@@ -17,6 +19,7 @@ def evaluate_test_set(test_loader, model):
         running_loss = 0
         running_corrects = 0
 
+        start_time = time.time()
         for data in test_loader:
             inputs, labels = data
 
@@ -33,31 +36,26 @@ def evaluate_test_set(test_loader, model):
             running_corrects += torch.sum(preds == labels.data).item()
 
         # Visualize the loss and accuracy values.
-        print({
-            'time': np.round(time.time()-start_time, 5),
+        test_info = {
+            'test_time': np.round(time.time()-start_time, 5),
             'test_loss': np.round(running_loss / dataset_sizes['test'], 5),
             'test_acc': np.round(running_corrects / dataset_sizes['test'], 5),
-        })
+        }
+        print(test_info)
+        return test_info
 
 
-if __name__ == "__main__":
-    data_conf = DataConfig()
-    data_loaders, dataset_sizes = data_loader_builder(data_conf)
-
-    if torch.cuda.is_available():
-        print("Using GPUs")
-        device = torch.device("cuda")
-    else:
-        device = torch.device("cpu")
-    model = ResNet(model_n=3, device=device)
-
+def run(
+        data_loaders,
+        data_sizes,
+        model: ModelABC,
+        logger: LoggerABC
+):
     epochs = 100
     loss_fn = nn.CrossEntropyLoss()
     optimizer = optim.SGD(model.parameters(), lr=0.01, momentum=0.9)
     scheduler = optim.lr_scheduler.MultiStepLR(
         optimizer, milestones=[80], gamma=0.1)
-
-    logger = LoggerDefault("test")
 
     for epoch in range(epochs):
         start_time = time.time()
@@ -101,7 +99,7 @@ if __name__ == "__main__":
 
         # Visualize the loss and accuracy values.
         training_info = {
-            'time': np.round(time.time()-start_time, 5),
+            'train_time': np.round(time.time()-start_time, 5),
             'train_loss': np.round(epoch_loss["train"], 5),
             'train_acc': np.round(epoch_acc["train"], 5),
             'val_loss': np.round(epoch_loss["validation"], 5),
@@ -112,5 +110,22 @@ if __name__ == "__main__":
 
         scheduler.step()
 
-    evaluate_test_set(data_loaders["test"], model)
-    logger.on_training_end({})
+    test_info = evaluate_test_set(
+        data_loaders["test"], model, optimizer, loss_fn
+    )
+    logger.on_training_end(test_info)
+
+
+if __name__ == "__main__":
+    data_conf = DataConfig()
+    data_loaders, dataset_sizes = data_loader_builder(data_conf)
+
+    if torch.cuda.is_available():
+        print("Using GPUs")
+        device = torch.device("cuda")
+    else:
+        device = torch.device("cpu")
+    model = ResNet(model_n=3, device=device)
+    logger = LoggerDefault("_results")
+
+    run(data_loaders, dataset_sizes, model, logger)
