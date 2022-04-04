@@ -35,8 +35,7 @@ def run(
     for epoch in range(train_conf.n_epochs):
         start_time = time.time()
         if epoch % train_conf.n_epochs_per_print == 0:
-            print("Epoch {}/{}".format(epoch, train_conf.n_epochs - 1))
-            print("-" * 30)
+            print("Epoch {}/{} - ".format(epoch, train_conf.n_epochs - 1), end="")
 
         epoch_loss = {"train": 0.0, "validation": 0.0}
         epoch_acc = {"train": 0.0, "validation": 0.0}
