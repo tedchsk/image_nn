@@ -71,7 +71,9 @@ def run(
             epoch_loss[phase] = running_loss[phase] / dataset_sizes[phase]
             epoch_acc[phase] = running_corrects[phase] / dataset_sizes[phase]
 
-        # Visualize the loss and accuracy values.
+        scheduler.step()
+
+        # Calculate the loss and accuracy values.
         training_info = {
             'train_time': np.round(time.time()-start_time, 5),
             'train_loss': np.round(epoch_loss["train"], 5),
@@ -79,11 +81,11 @@ def run(
             'val_loss': np.round(epoch_loss["validation"], 5),
             'val_acc': np.round(epoch_acc["validation"], 5),
         }
-        print(training_info)
+        if epoch % train_conf.n_epochs_per_print == 0:
+            print(training_info)
         logger.on_epoch_end(training_info)
-        scheduler.step()
 
-        # Early stopping logic. Wonder how tensorflow write this portion of the training process.
+        # Early stopping logic.
         val_loss = epoch_loss["validation"]
         if val_loss < min_val_loss:
              epochs_no_improve = 0

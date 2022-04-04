@@ -32,4 +32,6 @@ class TrainingConfig:
     def build_scheduler(self, optimizer):
         return optim.lr_scheduler.MultiStepLR(optimizer, milestones=self.milestones, gamma=self.gamma)
 
+    # Verbose
+    n_epochs_per_print: int = 5 # -1 to not print at all, 1 to print at every epoch
 
