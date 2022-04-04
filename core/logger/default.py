@@ -30,6 +30,8 @@ class LoggerDefault(LoggerABC):
         # Record the whole training_info
 
         # Whole logs
+        os.makedirs(self.save_dir, exist_ok=True)
+
         whole_logs_dir = join(self.save_dir, "logs.npy")
         with open(whole_logs_dir, "wb") as f:
             np.save(f, self.logs)
