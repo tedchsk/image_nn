@@ -1,4 +1,4 @@
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 import time
 from typing import Callable, List
 import torch
@@ -19,7 +19,7 @@ class TrainingConfig:
     optimizer: Callable = optim.SGD # or "adam" 
     lr: float = 0.01
     momentum: float = 0.9
-    milestones: List[int] = [80]
+    milestones: List[int] = field(default_factory=list)
     gamma: float = 0.1
     n_early_stopping: int = 5 # Set to None is don't want to early stopping
     k_fold: int = 1
