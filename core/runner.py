@@ -1,3 +1,5 @@
+import os
+from datetime import datetime
 from dataclasses import dataclass, field
 import time
 from typing import Callable, List
@@ -21,7 +23,7 @@ class TrainingConfig:
     momentum: float = 0.9
     milestones: List[int] = field(default_factory=list)
     gamma: float = 0.1
-    n_early_stopping: int = 5 # Set to None is don't want to early stopping
+    n_early_stopping: int = 5 # Set to -1 is don't want to early stopping
     k_fold: int = 1
 
     def build_optimizer(self, params):
@@ -34,9 +36,11 @@ def run(
         data_loaders,
         dataset_sizes,
         model: ModelABC,
-        logger: LoggerABC,
-        train_conf: TrainingConfig
+        train_conf: TrainingConfig,
+        runname: str=datetime.now().strftime("%y%m%d_%H%M%S"), # Same for each run
+        expname: str="untitled" # Different for each configuration
 ):
+    logger = LoggerDefault(os.path.join("_results", runname, expname))
     loss_fn = nn.CrossEntropyLoss()
     optimizer = train_conf.build_optimizer(model.parameters())
     scheduler = train_conf.build_scheduler(optimizer)
@@ -102,7 +106,7 @@ def run(
              min_val_loss = val_loss
         else:
             epochs_no_improve += 1
-        if train_conf.n_early_stopping is not None and epochs_no_improve >= train_conf.n_early_stopping:
+        if train_conf.n_early_stopping > 0 and epochs_no_improve >= train_conf.n_early_stopping:
             print(f"Early stopped because validation doesn't improve in {train_conf.n_early_stopping} epochs")
             break
 
