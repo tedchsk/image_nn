@@ -21,6 +21,8 @@ def run(
         runname: str=datetime.now().strftime("%y%m%d_%H%M%S"), # Same for each run
         expname: str="untitled" # Different for each configuration
 ):
+    print(f"Start training process of exp: {expname}")
+
     data_loaders, dataset_sizes = data_loader_builder(train_conf)
     logger = LoggerDefault(os.path.join("_results", runname, expname))
     loss_fn = nn.CrossEntropyLoss()
