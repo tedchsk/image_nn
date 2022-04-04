@@ -22,4 +22,5 @@ echo "Setting up project"
 make envload
 conda activate python39
 # conda install pytorch torchvision torchaudio cudatoolkit=11.3 -c pytorch
+pip install -e .
 

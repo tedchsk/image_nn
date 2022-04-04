@@ -1,4 +1,5 @@
 import os
+from typing import overload
 import numpy as np
 from core.logger.default import LoggerDefault
 
@@ -20,7 +21,7 @@ def test_logger_default_on_epoch_end():
 
 def test_logger_default_on_training_end(tmpdir):
     # Tmp dir
-    logger = LoggerDefault(tmpdir)
+    logger = LoggerDefault(tmpdir, override=True)
 
     for _ in range(20):
         logger.on_epoch_end({"acc": 0.2, "train_loss": 0.125})

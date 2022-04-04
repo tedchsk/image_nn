@@ -1,7 +1,9 @@
+import pytest
 from core.args import DataConfig
 from core.data_loader import data_loader_builder
 
 
+@pytest.mark.slow
 def test_data_loader_builder():
     data_config = DataConfig()
 
