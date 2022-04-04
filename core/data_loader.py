@@ -2,14 +2,14 @@ import torch
 import torchvision
 from torchvision.transforms import Compose, ToTensor, Normalize, RandomCrop, RandomHorizontalFlip
 from torch.utils.data import random_split, DataLoader
-from core.args import DataConfig
+from core.args import TrainingConfig
 
 torch.manual_seed(43)
 # mean, std = (0.4914, 0.4822, 0.4465), (0.247, 0.243, 0.261)
 
 
 def data_loader_builder(
-        conf: DataConfig
+        conf: TrainingConfig
 ):
     """ Given DataConfig, create Pytorch data image loader """
 
@@ -51,7 +51,7 @@ def data_loader_builder(
     return data_loaders, dataset_sizes
 
 
-def build_data_transformer(conf: DataConfig):
+def build_data_transformer(conf: TrainingConfig):
 
     if len(conf.pipelines) > 0:
         print("Using default pipelines of lengths: ", conf.pipelines)

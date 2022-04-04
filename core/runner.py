@@ -7,7 +7,7 @@ import torch
 import numpy as np
 import torch.nn as nn
 import torch.optim as optim
-from core.args import DataConfig
+from core.args import TrainingConfig
 from core.data_loader import data_loader_builder
 from core.logger.default import LoggerDefault
 from core.logger.logger_abc import LoggerABC
@@ -15,31 +15,13 @@ from core.model.model_abc import ModelABC
 from core.model.resnet import ResNet
 
 
-@dataclass
-class TrainingConfig:
-    n_epochs: int
-    optimizer: Callable = optim.SGD # or "adam" 
-    lr: float = 0.01
-    momentum: float = 0.9
-    milestones: List[int] = field(default_factory=list)
-    gamma: float = 0.1
-    n_early_stopping: int = 5 # Set to -1 is don't want to early stopping
-    k_fold: int = 1
-
-    def build_optimizer(self, params):
-        return self.optimizer(params, lr=self.lr, momentum=self.momentum)
-
-    def build_scheduler(self, optimizer):
-        return optim.lr_scheduler.MultiStepLR(optimizer, milestones=self.milestones, gamma=self.gamma)
-
 def run(
-        data_loaders,
-        dataset_sizes,
         model: ModelABC,
         train_conf: TrainingConfig,
         runname: str=datetime.now().strftime("%y%m%d_%H%M%S"), # Same for each run
         expname: str="untitled" # Different for each configuration
 ):
+    data_loaders, dataset_sizes = data_loader_builder(train_conf)
     logger = LoggerDefault(os.path.join("_results", runname, expname))
     loss_fn = nn.CrossEntropyLoss()
     optimizer = train_conf.build_optimizer(model.parameters())
