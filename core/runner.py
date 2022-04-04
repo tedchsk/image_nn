@@ -20,11 +20,12 @@ def evaluate_test_set(test_loader, model, optimizer, loss_fn):
         running_corrects = 0
 
         start_time = time.time()
+        dataset_size = 0
         for data in test_loader:
             inputs, labels = data
 
-            inputs = inputs.to(device)
-            labels = labels.to(device)
+            inputs = inputs.to(model.device)
+            labels = labels.to(model.device)
 
             optimizer.zero_grad()  # clear all gradients
 
@@ -35,11 +36,13 @@ def evaluate_test_set(test_loader, model, optimizer, loss_fn):
             running_loss += loss.data.item() * inputs.size(0)
             running_corrects += torch.sum(preds == labels.data).item()
 
+            dataset_size += inputs.shape[0]
+
         # Visualize the loss and accuracy values.
         test_info = {
             'test_time': np.round(time.time()-start_time, 5),
-            'test_loss': np.round(running_loss / dataset_sizes['test'], 5),
-            'test_acc': np.round(running_corrects / dataset_sizes['test'], 5),
+            'test_loss': np.round(running_loss / dataset_size, 5),
+            'test_acc': np.round(running_corrects / dataset_size, 5),
         }
         print(test_info)
         return test_info
@@ -77,8 +80,8 @@ def run(
             for data in data_loaders[phase]:
                 inputs, labels = data
 
-                inputs = inputs.to(device)
-                labels = labels.to(device)
+                inputs = inputs.to(model.device)
+                labels = labels.to(model.device)
 
                 optimizer.zero_grad()  # clear all gradients
 
@@ -114,18 +117,3 @@ def run(
         data_loaders["test"], model, optimizer, loss_fn
     )
     logger.on_training_end(test_info)
-
-
-if __name__ == "__main__":
-    data_conf = DataConfig()
-    data_loaders, dataset_sizes = data_loader_builder(data_conf)
-
-    if torch.cuda.is_available():
-        print("Using GPUs")
-        device = torch.device("cuda")
-    else:
-        device = torch.device("cpu")
-    model = ResNet(model_n=3, device=device)
-    logger = LoggerDefault("_results")
-
-    run(data_loaders, dataset_sizes, model, logger)

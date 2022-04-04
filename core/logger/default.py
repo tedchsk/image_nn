@@ -43,5 +43,3 @@ class LoggerDefault(LoggerABC):
 
         return summarized
 
-
-# class LoggerDefaultReader
