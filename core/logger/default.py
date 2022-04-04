@@ -3,6 +3,7 @@ import os
 from os.path import join
 from collections import defaultdict
 from typing import Dict
+from core.args import TrainingConfig
 from core.logger.logger_abc import LoggerABC
 
 
@@ -26,7 +27,7 @@ class LoggerDefault(LoggerABC):
         for k, v in training_info.items():
             self.logs[k].append(v)
 
-    def on_training_end(self, test_info: Dict):
+    def on_training_end(self, test_info: Dict, training_conf: TrainingConfig):
         # Record the whole training_info
 
         # Whole logs
@@ -39,9 +40,13 @@ class LoggerDefault(LoggerABC):
         # Summarize the logs + test_info
         summarized = {k: avg(v) for k, v in self.logs.items()}
         summarized |= test_info  # Work only in Python 3.9
-
         summarized_logs_dir = join(self.save_dir, "summarized.npy")
         with open(summarized_logs_dir, "wb") as f:
             np.save(f, summarized)
+
+        # Training config
+        training_config_dir = join(self.save_dir, "training_config.npy")
+        with open(summarized_logs_dir, "wb") as f:
+            np.save(f, training_conf)
 
         return summarized

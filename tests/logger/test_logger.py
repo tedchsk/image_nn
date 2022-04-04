@@ -1,6 +1,7 @@
 import os
 from typing import overload
 import numpy as np
+from core.args import TrainingConfig
 from core.logger.default import LoggerDefault
 
 
@@ -32,7 +33,7 @@ def test_logger_default_on_training_end(tmpdir):
         "test_acc": 0.9
     }
 
-    summarized = logger.on_training_end({"test_acc": 0.9})
+    summarized = logger.on_training_end({"test_acc": 0.9}, TrainingConfig())
 
     for k in expected:
         np.testing.assert_almost_equal(summarized[k], expected[k])
