@@ -14,8 +14,8 @@ class TrainingConfig:
     """Class for training configuration"""
 
     # Model specific
-    get_model: Callable[..., ModelABC]
-    model_params: Dict[str, Any]
+    get_model: Callable[..., ModelABC] = None
+    model_params: Dict[str, Any] = None
 
     # Data loader specific
     dataset_builder = D.CIFAR10
