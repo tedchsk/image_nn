@@ -28,5 +28,5 @@ if __name__ == "__main__":
     model = ResNet(model_n=3, device=device).to(device)
 
 
-    train_conf = TrainingConfig(100, early_stopping=True)
+    train_conf = TrainingConfig(100, n_early_stopping=5)
     run(data_loaders, dataset_sizes, model, logger, train_conf)

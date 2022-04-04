@@ -97,7 +97,7 @@ def run(
 
         # Early stopping logic. Wonder how tensorflow write this portion of the training process.
         val_loss = epoch_loss["validation"]
-        if val_loss < min_val_loss
+        if val_loss < min_val_loss:
              epochs_no_improve = 0
              min_val_loss = val_loss
         else:
