@@ -3,3 +3,7 @@ envsave:
 	conda env export > environment.yml --from-history
 envload:
 	conda env create --name python39 --file environment.yml
+test:
+	pytest -m "not slow"
+test_all:
+	pytest
