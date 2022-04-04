@@ -5,10 +5,12 @@ import torch.nn as nn
 import torch.optim as optim
 from core.args import DataConfig
 from core.data_loader import data_loader_builder
+from core.logger.default import LoggerDefault
 from core.model.resnet import ResNet
 
 
 def evaluate_test_set(test_loader, model):
+
     # evaluating the model with test set
     with torch.no_grad():
         model.eval()
@@ -55,6 +57,8 @@ if __name__ == "__main__":
     scheduler = optim.lr_scheduler.MultiStepLR(
         optimizer, milestones=[80], gamma=0.1)
 
+    logger = LoggerDefault("test")
+
     for epoch in range(epochs):
         start_time = time.time()
         print("Epoch {}/{}".format(epoch, epochs - 1))
@@ -89,20 +93,24 @@ if __name__ == "__main__":
                     optimizer.step()  # update weights/biases
 
                 running_loss[phase] += loss.data.item() * inputs.size(0)
-                running_corrects[phase] += torch.sum(preds == labels.data).item()
+                running_corrects[phase] += torch.sum(
+                    preds == labels.data).item()
 
             epoch_loss[phase] = running_loss[phase] / dataset_sizes[phase]
             epoch_acc[phase] = running_corrects[phase] / dataset_sizes[phase]
 
         # Visualize the loss and accuracy values.
-        print({
+        training_info = {
             'time': np.round(time.time()-start_time, 5),
             'train_loss': np.round(epoch_loss["train"], 5),
             'train_acc': np.round(epoch_acc["train"], 5),
             'val_loss': np.round(epoch_loss["validation"], 5),
             'val_acc': np.round(epoch_acc["validation"], 5),
-        })
+        }
+        print(training_info)
+        logger.on_epoch_end(training_info)
 
         scheduler.step()
 
     evaluate_test_set(data_loaders["test"], model)
+    logger.on_training_end({})
