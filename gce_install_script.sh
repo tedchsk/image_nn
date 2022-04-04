@@ -12,7 +12,7 @@ sudo apt-get update
 sudo apt-get install bzip2 libxml2-dev wget
 
 wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh
-yes | bash Miniconda3-latest-Linux-x86_64.sh
+bash Miniconda3-latest-Linux-x86_64.sh
 rm Miniconda3-latest-Linux-x86_64.sh
 source ~/.bashrc
 
