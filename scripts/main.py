@@ -10,11 +10,12 @@ from core.logger.default import LoggerDefault
 from core.logger.logger_abc import LoggerABC
 from core.model.model_abc import ModelABC
 from core.model.resnet import ResNet
-from core.runner import run
+from core.runner import TrainingConfig, run
 
 
 if __name__ == "__main__":
     now_str = datetime.now().strftime("%y%m%d_%H%M%S")
+    logger = LoggerDefault(os.path.join("_results", now_str))
 
     data_conf = DataConfig()
     data_loaders, dataset_sizes = data_loader_builder(data_conf)
@@ -26,6 +27,6 @@ if __name__ == "__main__":
         device = torch.device("cpu")
     model = ResNet(model_n=3, device=device).to(device)
 
-    logger = LoggerDefault(os.path.join("_results", now_str))
 
-    run(data_loaders, dataset_sizes, model, logger)
+    train_conf = TrainingConfig(100, early_stopping=True)
+    run(data_loaders, dataset_sizes, model, logger, train_conf)
