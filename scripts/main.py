@@ -24,7 +24,7 @@ if __name__ == "__main__":
         device = torch.device("cuda")
     else:
         device = torch.device("cpu")
-    model = ResNet(model_n=3, device=device)
+    model = ResNet(model_n=3, device=device).to(device)
 
     logger = LoggerDefault(os.path.join("_results", now_str))
 
