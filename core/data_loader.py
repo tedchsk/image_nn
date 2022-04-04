@@ -14,6 +14,7 @@ def data_loader_builder(
     """ Given DataConfig, create Pytorch data image loader """
 
     transform = build_data_transformer(conf)
+
     train_set = conf.dataset_builder(
         root="data", train=True, download=True, transform=transform
     )
@@ -56,6 +57,7 @@ def data_loader_builder(
 def build_data_transformer(conf: DataConfig):
 
     if len(conf.pipelines) > 0:
+        print("Using default pipelines of lengths: ", conf.pipelines)
         return Compose(conf.pipelines)
 
     transform = Compose([
@@ -66,4 +68,4 @@ def build_data_transformer(conf: DataConfig):
     ])
 
     # TODO: Build data transforming pipelines from string specification
-    return Compose(transform)
+    return transform
