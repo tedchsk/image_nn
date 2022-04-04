@@ -14,6 +14,7 @@ class DataConfig:
     name: str = "default"
     batch_size: int = 512
     test_ratio: float = 0.2  # (test + valid = 1.0)
+    small: bool = False
 
 
 @dataclass

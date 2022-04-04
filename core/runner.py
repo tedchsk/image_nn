@@ -50,7 +50,7 @@ def evaluate_test_set(test_loader, model, optimizer, loss_fn):
 
 def run(
         data_loaders,
-        data_sizes,
+        dataset_sizes,
         model: ModelABC,
         logger: LoggerABC
 ):
@@ -94,8 +94,7 @@ def run(
                     optimizer.step()  # update weights/biases
 
                 running_loss[phase] += loss.data.item() * inputs.size(0)
-                running_corrects[phase] += torch.sum(
-                    preds == labels.data).item()
+                running_corrects[phase] += torch.sum(preds == labels.data).item()
 
             epoch_loss[phase] = running_loss[phase] / dataset_sizes[phase]
             epoch_acc[phase] = running_corrects[phase] / dataset_sizes[phase]

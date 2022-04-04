@@ -43,6 +43,7 @@ class ResNet(ModelABC):
 
         self.residual_layers = nn.ModuleList([])
         self.model_n = model_n
+        self.device = device
 
         # begining layers
         self.conv1 = nn.Conv2d(3, 16, kernel_size=3, stride=1, padding='same')
