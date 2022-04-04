@@ -33,12 +33,9 @@ def data_loader_builder(
     validation_size = len(validation_set)
 
     batch_size = conf.batch_size
-    train_loader = DataLoader(train_set, batch_size,
-                              shuffle=True, num_workers=4, pin_memory=True)
-    test_loader = DataLoader(test_set, batch_size,
-                             num_workers=4, pin_memory=True)
-    validation_loader = DataLoader(
-        validation_set, batch_size, num_workers=4, pin_memory=True)
+    train_loader = DataLoader(train_set, batch_size, shuffle=True, pin_memory=True)
+    test_loader = DataLoader(test_set, batch_size, pin_memory=True)
+    validation_loader = DataLoader(validation_set, batch_size, pin_memory=True)
 
     data_loaders = {
         "train": train_loader,
