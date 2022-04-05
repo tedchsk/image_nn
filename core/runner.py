@@ -130,7 +130,9 @@ class Runner:
 
             test_info = self.evaluate_test_set(
                 data_loaders["test"], model, optimizer, loss_fn)
-            logger.on_training_end(test_info, train_conf)
+
+            # For now just report the last training_info, better way is to get minimum acc explicitly.
+            logger.on_training_end(test_info | training_info, train_conf)
 
     def evaluate_test_set(self, test_loader, model, optimizer, loss_fn):
 
