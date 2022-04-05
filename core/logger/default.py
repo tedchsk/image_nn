@@ -46,7 +46,7 @@ class LoggerDefault(LoggerABC):
 
         # Training config
         training_config_dir = join(self.save_dir, "training_config.npy")
-        with open(summarized_logs_dir, "wb") as f:
+        with open(training_config_dir, "wb") as f:
             np.save(f, training_conf)
 
         return summarized
