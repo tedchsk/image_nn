@@ -112,7 +112,7 @@ class Runner:
                     print(f"Early stopped because validation doesn't improve in {train_conf.n_early_stopping} epochs")
                     break
 
-            test_info = evaluate_test_set(data_loaders["test"], model, optimizer, loss_fn)
+            test_info = self.evaluate_test_set(data_loaders["test"], model, optimizer, loss_fn)
             logger.on_training_end(test_info, train_conf)
 
 
