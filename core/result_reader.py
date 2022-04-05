@@ -25,6 +25,10 @@ def combine_run_experiment(exp_dir: str) -> pd.DataFrame:
     dfs = []
     for fold in fold_dirs:
         fold_dir = os.path.join(exp_dir, fold)
+
+        if "DS_Store" in fold_dir:
+            continue  # Macos stuff
+
         # Read three files - logs, summarized, and training_conf (not here for now)
         # For now let's read only logs
 
@@ -48,10 +52,12 @@ def combine_run_experiment(exp_dir: str) -> pd.DataFrame:
 
 def pandas_safe_dict(training_config):
     new_training_config = {}
-    for k, v in training_config.item():
+    for k, v in training_config.items():
         if type(v) in [list, dict]:
-            new_training_config[k] = str(v)
+            new_training_config[k] = [str(v)]
         elif k == "get_model":
             continue
         else:
-            new_training_config[k] = v
+            new_training_config[k] = [v]
+
+    return new_training_config

@@ -15,7 +15,7 @@ from core.model.model_abc import ModelABC
 from core.model.resnet import ResNet
 
 SEED_FOR_FOLDS = [42, 124, 6124, 1235, 1265, 1734,
-                  134, 16, 12, 61, 123, 643, 6143, 6413, 712]
+                  134, 16, 12, 61, 123, 643, 6143, 6413, 712, 1024, 612, 6124, 995, 12512, 16141236]
 
 
 class Runner:
@@ -137,8 +137,7 @@ class Runner:
             print("Training Done - ", test_info)
 
             # For now just report the last training_info, better way is to get minimum acc explicitly.
-            result = logger.on_training_end(
-                test_info | training_info, train_conf)
+            logger.on_training_end(test_info | training_info, train_conf)
 
     def evaluate_test_set(self, test_loader, model, optimizer, loss_fn):
 
