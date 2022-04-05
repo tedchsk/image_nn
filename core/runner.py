@@ -14,7 +14,7 @@ from core.logger.logger_abc import LoggerABC
 from core.model.model_abc import ModelABC
 from core.model.resnet import ResNet
 
-SEED_FOR_FOLDS = list(set([42, 124, 6124, 1235, 1265, 1734, 134, 16, 12, 61, 123, 643, 6143, 6413, 712]))
+SEED_FOR_FOLDS = [42, 124, 6124, 1235, 1265, 1734, 134, 16, 12, 61, 123, 643, 6143, 6413, 712]
 
 class Runner:
 
@@ -34,7 +34,7 @@ class Runner:
         for k in range(train_conf.k_fold):
             # Set random to something else
             torch.manual_seed(SEED_FOR_FOLDS[k])
-            print(f"Fold {k} / {train_conf.k_fold}, seed = {SEED_FOR_FOLDS[k]}")
+            print(f"Fold {k + 1} / {train_conf.k_fold}, seed = {SEED_FOR_FOLDS[k]}")
 
             logger = LoggerDefault(os.path.join("_results", self.runname, expname, str(k)))
             model = train_conf.get_model(**train_conf.model_params).to(self.device)
@@ -48,7 +48,7 @@ class Runner:
             for epoch in range(train_conf.n_epochs):
                 start_time = time.time()
                 if epoch % train_conf.n_epochs_per_print == 0:
-                    print("Epoch {}/{} - ".format(epoch, train_conf.n_epochs - 1), end="")
+                    print("Epoch {}/{} - ".format(epoch + 1, train_conf.n_epochs), end="")
 
                 epoch_loss = {"train": 0.0, "validation": 0.0}
                 epoch_acc = {"train": 0.0, "validation": 0.0}
