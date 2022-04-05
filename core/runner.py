@@ -35,8 +35,9 @@ class Runner:
             # Set random to something else
             torch.manual_seed(SEED_FOR_FOLDS[k])
 
-            logger = LoggerDefault(os.path.join("_results", self.runname, expname)) # Don't add nested if only 1 fold
-            if train_conf.k_fold > 1:
+            if train_conf.k_fold == 1:
+                logger = LoggerDefault(os.path.join("_results", self.runname, expname)) # Don't add nested if only 1 fold
+            else:
                 print(f"Fold {k + 1} / {train_conf.k_fold}, seed = {SEED_FOR_FOLDS[k]}")
                 logger = LoggerDefault(os.path.join("_results", self.runname, expname, str(k)))
 
