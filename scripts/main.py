@@ -10,7 +10,7 @@ from core.logger.default import LoggerDefault
 from core.logger.logger_abc import LoggerABC
 from core.model.model_abc import ModelABC
 from core.model.resnet import ResNet
-from core.runner import Runner, run
+from core.runner import Runner
 
 if __name__ == "__main__":
 
