@@ -50,4 +50,4 @@ class LoggerDefault(LoggerABC):
         with open(training_config_dir, "wb") as f:
             np.save(f, training_conf)
 
-        return summarized
+        return training_end_info
