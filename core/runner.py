@@ -56,6 +56,7 @@ class Runner:
             min_val_loss = np.Inf
             epochs_no_improve = 0
 
+            fold_start_time = time.time()
             for epoch in range(train_conf.n_epochs):
                 start_time = time.time()
                 if epoch % train_conf.n_epochs_per_print == 0:
@@ -131,8 +132,13 @@ class Runner:
             test_info = self.evaluate_test_set(
                 data_loaders["test"], model, optimizer, loss_fn)
 
+            test_info["train_time"] = np.round(
+                time.time() - fold_start_time, 5)
+            print("Training Done - ", test_info)
+
             # For now just report the last training_info, better way is to get minimum acc explicitly.
-            logger.on_training_end(test_info | training_info, train_conf)
+            result = logger.on_training_end(
+                test_info | training_info, train_conf)
 
     def evaluate_test_set(self, test_loader, model, optimizer, loss_fn):
 
@@ -167,5 +173,4 @@ class Runner:
                 'test_loss': np.round(running_loss / dataset_size, 5),
                 'test_acc': np.round(running_corrects / dataset_size, 5),
             }
-            print(test_info)
             return test_info
