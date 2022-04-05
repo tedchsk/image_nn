@@ -34,9 +34,12 @@ class Runner:
         for k in range(train_conf.k_fold):
             # Set random to something else
             torch.manual_seed(SEED_FOR_FOLDS[k])
-            print(f"Fold {k + 1} / {train_conf.k_fold}, seed = {SEED_FOR_FOLDS[k]}")
 
-            logger = LoggerDefault(os.path.join("_results", self.runname, expname, str(k)))
+            logger = LoggerDefault(os.path.join("_results", self.runname, expname)) # Don't add nested if only 1 fold
+            if train_conf.k_fold > 1:
+                print(f"Fold {k + 1} / {train_conf.k_fold}, seed = {SEED_FOR_FOLDS[k]}")
+                logger = LoggerDefault(os.path.join("_results", self.runname, expname, str(k)))
+
             model = train_conf.get_model(**train_conf.model_params).to(self.device)
             loss_fn = nn.CrossEntropyLoss()
             optimizer = train_conf.build_optimizer(model.parameters())
