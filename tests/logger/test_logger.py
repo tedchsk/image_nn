@@ -28,8 +28,6 @@ def test_logger_default_on_training_end(tmpdir):
         logger.on_epoch_end({"acc": 0.2, "train_loss": 0.125})
 
     expected = {
-        "acc": 0.2,
-        "train_loss": 0.125,
         "test_acc": 0.9
     }
 
