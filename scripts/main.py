@@ -26,10 +26,10 @@ if __name__ == "__main__":
 
 
     train_conf = TrainingConfig(get_model=ResNet, model_params={"model_n": 3, "device": device}, n_early_stopping=-1, milestones=[80])
-    run(train_conf, runname=now_str, expname="no_early_stop")
+    run(train_conf, device=device, runname=now_str, expname="no_early_stop")
 
     train_conf = TrainingConfig(get_model=ResNet, model_params={"model_n": 3, "device": device}, n_early_stopping=5, milestones=[80])
-    run(train_conf, runname=now_str, expname="early_stop_5")
+    run(train_conf, device=device, runname=now_str, expname="early_stop_5")
 
     train_conf = TrainingConfig(get_model=ResNet, model_params={"model_n": 5, "device": device}, n_early_stopping=5, milestones=[80])
-    run(train_conf, runname=now_str, expname="model_5")
+    run(train_conf, device=device, runname=now_str, expname="model_5")

@@ -9,3 +9,4 @@ class ModelABC(nn.Module):
 
     def forward(self, x):
         pass
+
