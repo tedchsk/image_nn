@@ -27,12 +27,31 @@ def combine_run_experiment(exp_dir: str) -> pd.DataFrame:
         fold_dir = os.path.join(exp_dir, fold)
         # Read three files - logs, summarized, and training_conf (not here for now)
         # For now let's read only logs
-        logs = np.load(
-            os.path.join(fold_dir, "logs.npy"), allow_pickle=True
+
+        summarized_dict = np.load(
+            os.path.join(fold_dir, "summarized.npy"), allow_pickle=True
         ).flat[0]
 
-        df = pd.DataFrame.from_dict(logs)
+        training_config_dict = np.load(
+            os.path.join(fold_dir, "training_config.npy"), allow_pickle=True
+        ).flat[0].__dict__
+
+        df = pd.DataFrame.from_dict(
+            summarized_dict | pandas_safe_dict(training_config_dict)
+        )
+
         df["fold"] = fold
         dfs.append(df)
 
     return pd.concat(dfs)
+
+
+def pandas_safe_dict(training_config):
+    new_training_config = {}
+    for k, v in training_config.item():
+        if type(v) in [list, dict]:
+            new_training_config[k] = str(v)
+        elif k == "get_model":
+            continue
+        else:
+            new_training_config[k] = v
