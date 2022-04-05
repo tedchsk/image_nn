@@ -19,11 +19,11 @@ if __name__ == "__main__":
 
     runner = Runner(device=device, runname=now_str)
 
-    train_conf = TrainingConfig(get_model=ResNet, model_params={"model_n": 3, "device": device}, n_early_stopping=5, milestones=[80])
+    train_conf = TrainingConfig(get_model=ResNet, model_params={"model_n": 3, "device": device}, k_fold=5, n_early_stopping=5, milestones=[80])
     runner.run(train_conf, expname="early_stop_5")
 
-    train_conf = TrainingConfig(get_model=ResNet, model_params={"model_n": 3, "device": device}, n_early_stopping=-1, milestones=[80])
+    train_conf = TrainingConfig(get_model=ResNet, model_params={"model_n": 3, "device": device}, k_fold=5, n_early_stopping=-1, milestones=[80])
     runner.run(train_conf, expname="no_early_stop")
 
-    train_conf = TrainingConfig(get_model=ResNet, model_params={"model_n": 5, "device": device}, n_early_stopping=5, milestones=[80])
+    train_conf = TrainingConfig(get_model=ResNet, model_params={"model_n": 5, "device": device}, k_fold=5, n_early_stopping=5, milestones=[80])
     runner.run(train_conf, expname="model_5")
