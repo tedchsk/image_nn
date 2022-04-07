@@ -16,32 +16,15 @@ if __name__ == "__main__":
 
     now_str = datetime.now().strftime("%y%m%d_%H%M%S")  # Same for each run
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-
     runner = Runner(device=device, runname=now_str)
-    train_conf = TrainingConfig(get_model=ResNet, model_params={
-                                "model_n": 3, "device": device}, k_fold=5, n_early_stopping=5, milestones=[80])
-    runner.run(train_conf, expname="early_stop_5")
 
-    train_conf = TrainingConfig(get_model=ResNet, model_params={
-                                "model_n": 3, "device": device}, k_fold=5, n_early_stopping=20, milestones=[80])
-    runner.run(train_conf, expname="early_stop_20")
+    for model_n in [3, 5, 7, 9]:
+        train_conf = TrainingConfig(
+                get_model=ResNet,
+                model_params={ "model_n": model_n, "device": device},
+                k_fold=5,
+                n_early_stopping=-1,
+                milestones=[80]
+                )
+        runner.run(train_conf, expname=f"model_n_{model_n}")
 
-    train_conf = TrainingConfig(get_model=ResNet, model_params={
-                                "model_n": 5, "device": device}, k_fold=5, n_early_stopping=20, milestones=[80])
-    runner.run(train_conf, expname="model_5")
-
-    train_conf = TrainingConfig(get_model=ResNet, model_params={
-                                "model_n": 7, "device": device}, k_fold=5, n_early_stopping=20, milestones=[80])
-    runner.run(train_conf, expname="model_7")
-
-    train_conf = TrainingConfig(get_model=ResNet, model_params={
-        "model_n": 3, "device": device}, k_fold=5, n_early_stopping=20, milestones=[80], optimizer=torch.optim.Adam)
-    runner.run(train_conf, expname="opt_adam")
-
-#     train_conf = TrainingConfig(get_model=ResNet, model_params={
-#                                 "model_n": 3, "device": device}, n_epochs=5, k_fold=2, n_early_stopping=5, milestones=[80])
-#     runner.run(train_conf, expname="sanity_3")
-
-#     train_conf = TrainingConfig(get_model=ResNet, model_params={
-#                                 "model_n": 4, "device": device}, n_epochs=5, k_fold=2, n_early_stopping=5, milestones=[80])
-#     runner.run(train_conf, expname="sanity_4")

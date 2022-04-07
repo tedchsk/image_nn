@@ -4,9 +4,6 @@ from torchvision.transforms import Compose, ToTensor, Normalize, RandomCrop, Ran
 from torch.utils.data import random_split, DataLoader
 from core.args import TrainingConfig
 
-torch.manual_seed(43)
-# mean, std = (0.4914, 0.4822, 0.4465), (0.247, 0.243, 0.261)
-
 
 def data_loader_builder(
         conf: TrainingConfig
@@ -20,17 +17,21 @@ def data_loader_builder(
     )
     train_size = len(train_set)
 
+    train_set, validation_set = random_split(
+            train_set,
+            [
+                int(train_size*(1 - conf.valid_ratio)),
+                int(train_size*conf.valid_ratio),
+                ]
+            )
+
+    train_size = len(train_set)
+    validation_size = len(validation_set)
+
     test_set = conf.dataset_builder(
         root="data", train=False, download=True, transform=transform
     )
-
-    test_set, validation_set = random_split(
-        test_set,
-        [int(len(test_set)*conf.test_ratio),
-         int(len(test_set)*(1 - conf.test_ratio))]
-    )
     test_size = len(test_set)
-    validation_size = len(validation_set)
 
     batch_size = conf.batch_size
     train_loader = DataLoader(train_set, batch_size, shuffle=True, pin_memory=True)
