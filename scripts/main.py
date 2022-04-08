@@ -23,8 +23,8 @@ if __name__ == "__main__":
                 get_model=ResNet,
                 model_params={ "model_n": model_n, "device": device},
                 k_fold=5,
-                n_early_stopping=20,
-                milestones=[60]
+                n_early_stopping=-1,
+                milestones=[90, 135]
                 )
         runner.run(train_conf, expname=f"model_n_{model_n}")
 

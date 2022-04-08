@@ -52,18 +52,16 @@ def data_loader_builder(
     return data_loaders, dataset_sizes
 
 
-def build_data_transformer(conf: TrainingConfig):
+def build_data_transformer(conf: TrainingConfig, is_train: bool=True):
 
     if len(conf.pipelines) > 0:
-        print("Using default pipelines of lengths: ", conf.pipelines)
-        return Compose(conf.pipelines)
+        using_pipelines = conf.pipelines if is_train or len(conf.test_pipelines) > 0 else conf.test_pipelines
+        print("Using default pipelines of lengths: ", using_pipelines)
+        return Compose(using_pipelines)
 
-    transform = Compose([
-        ToTensor(),
-        # Normalize(mean, std),
-        RandomCrop(32, padding=4, padding_mode='constant'),
-        RandomHorizontalFlip(p=0.5)
-    ])
+    pipelines = [ToTensor()]
+    if is_train:
+        pipelines.append(RandomCrop(32, padding=4, padding_mode='constant'))
+        pipelines.append(RandomHorizontalFlip(p=0.5))
 
-    # TODO: Build data transforming pipelines from string specification
-    return transform
+    return Compose(pipelines)

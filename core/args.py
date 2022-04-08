@@ -20,6 +20,7 @@ class TrainingConfig:
     # Data loader specific
     dataset_builder = D.CIFAR10
     pipelines: List = field(default_factory=list)
+    test_pipelines: List = field(default_factory=list)
     name: str = "default"
     batch_size: int = 128
     # test_ratio: float = 0.2  # (test + valid = 1.0)
@@ -27,17 +28,20 @@ class TrainingConfig:
     small: bool = False
 
     # Training specific
-    n_epochs: int = 100
+    n_epochs: int = 180
     optimizer: Callable = optim.SGD  # or "adam"
-    lr: float = 0.01
+    # Optimizer
+    lr: float = 0.1
     momentum: float = 0.9
+    weight_decay: float = 0.0001
+    # Scheduler
     milestones: List[int] = field(default_factory=list)
     gamma: float = 0.1
     n_early_stopping: int = 5  # Set to -1 is don't want to early stopping
     k_fold: int = 1
 
     def build_optimizer(self, params):
-        return self.optimizer(params, lr=self.lr, momentum=self.momentum)
+        return self.optimizer(params, lr=self.lr, momentum=self.momentum, weight_decay=self.weight_decay)
 
     def build_scheduler(self, optimizer):
         return optim.lr_scheduler.MultiStepLR(optimizer, milestones=self.milestones, gamma=self.gamma)
