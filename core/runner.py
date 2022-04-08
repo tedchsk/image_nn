@@ -134,6 +134,7 @@ class Runner:
 
             test_info["train_time"] = np.round(
                 time.time() - fold_start_time, 5)
+            test_info["n_epochs"] = epoch # The number of epochs might changed due to early stopping.
             print("Training Done - ", test_info)
 
             # For now just report the last training_info, better way is to get minimum acc explicitly.
