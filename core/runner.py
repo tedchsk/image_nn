@@ -78,8 +78,8 @@ class Runner:
                     for data in data_loaders[phase]:
                         inputs, labels = data
 
-                        inputs = inputs.to(model.device)
-                        labels = labels.to(model.device)
+                        inputs = inputs.to(self.device)
+                        labels = labels.to(self.device)
 
                         optimizer.zero_grad()  # clear all gradients
 
@@ -153,8 +153,8 @@ class Runner:
             for data in test_loader:
                 inputs, labels = data
 
-                inputs = inputs.to(model.device)
-                labels = labels.to(model.device)
+                inputs = inputs.to(self.device)
+                labels = labels.to(self.device)
 
                 optimizer.zero_grad()  # clear all gradients
 
