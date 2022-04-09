@@ -20,8 +20,7 @@ if __name__ == "__main__":
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     runner = Runner(device=device, runname=now_str)
 
-    if torch.cuda.is_available():
-        print("Using GPU")
+    print("Using GPU" if torch.cuda.is_available() else "Using CPU")
 
     experiments = [
             ("ResNet18", ResNet18),
