@@ -21,11 +21,11 @@ if __name__ == "__main__":
     runner = Runner(device=device, runname=now_str)
 
     experiments = [
-            "ResNet18", ResNet18,
-            "ResNet34", ResNet34,
-            "ResNet50", ResNet50,
-            "ResNet70", ResNet70,
-            "ResNet101", ResNet101
+            ("ResNet18", ResNet18),
+            ("ResNet34", ResNet34),
+            ("ResNet50", ResNet50),
+            ("ResNet70", ResNet70),
+            ("ResNet101", ResNet101)
             ]
 
     for (model_name, model) in experiments:
