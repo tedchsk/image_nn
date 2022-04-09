@@ -8,9 +8,11 @@ from core.args import TrainingConfig
 from core.data_loader import data_loader_builder
 from core.logger.default import LoggerDefault
 from core.logger.logger_abc import LoggerABC
+from core.model.big_resnet import *
 from core.model.model_abc import ModelABC
 from core.model.resnet import ResNet
 from core.runner import Runner
+import torchvision.datasets as D
 
 if __name__ == "__main__":
 
@@ -18,13 +20,22 @@ if __name__ == "__main__":
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     runner = Runner(device=device, runname=now_str)
 
-    for model_n in [3, 5, 7, 9]:
+    experiments = [
+            "ResNet18", ResNet18,
+            "ResNet34", ResNet34,
+            "ResNet50", ResNet50,
+            "ResNet70", ResNet70,
+            "ResNet101", ResNet101
+            ]
+
+    for (model_name, model) in experiments:
         train_conf = TrainingConfig(
+                dataset_builder=D.CIFAR100
                 get_model=ResNet,
-                model_params={ "model_n": model_n, "device": device},
+                model_params={ "num_classes": 100, "device": device},
                 k_fold=5,
                 n_early_stopping=-1,
                 milestones=[90, 135]
                 )
-        runner.run(train_conf, expname=f"model_n_{model_n}")
+        runner.run(train_conf, expname=model_name)
 
