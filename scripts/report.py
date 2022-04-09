@@ -21,4 +21,6 @@ summarized = df.groupby("exp_name").agg(
             }
         )
 
+summarized["test_err"]["mean"] - 1.67 * summarized["test_err"]["std"] / math.sqrt(summarized["n_epochs"]["count"])
+
 print(summarized.head(100))
