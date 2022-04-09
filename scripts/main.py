@@ -30,7 +30,7 @@ if __name__ == "__main__":
 
     for (model_name, model) in experiments:
         train_conf = TrainingConfig(
-                dataset_builder=D.CIFAR100
+                dataset_builder=D.CIFAR100,
                 get_model=ResNet,
                 model_params={ "num_classes": 100, "device": device},
                 k_fold=5,
