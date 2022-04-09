@@ -8,7 +8,6 @@ import torchvision.datasets as D
 from typing import List, Callable
 from dataclasses import dataclass, field
 
-
 @dataclass
 class TrainingConfig:
     """Class for training configuration"""
@@ -18,7 +17,7 @@ class TrainingConfig:
     model_params: Dict[str, Any] = None
 
     # Data loader specific
-    dataset_builder = D.CIFAR10
+    dataset_builder: Callable = D.CIFAR10
     pipelines: List = field(default_factory=list)
     test_pipelines: List = field(default_factory=list)
     name: str = "default"
