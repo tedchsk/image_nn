@@ -2,7 +2,7 @@
 import os
 from core.result_reader import combine_run_experiments
 
-RESULT_DIR = "tests/sample_results"
+RESULT_DIR = "_results"
 
 dirs = os.listdir(RESULT_DIR)
 latest_dir = sorted(dirs)[-1]
