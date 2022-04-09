@@ -13,7 +13,7 @@ for col in ["train", "test", "val"]:
 
 summarized = df.groupby("exp_name").agg(
         {
-            "train_er": ["mean", "std"],
+            "train_err": ["mean", "std"],
             "val_err": ["mean", "std"],
             "test_err": ["mean", "std"],
             "n_epochs": ["count"],
