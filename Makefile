@@ -9,3 +9,5 @@ test_all:
 	pytest
 train:
 	python scripts/main.py
+report:
+	python scripts/report.py
