@@ -8,6 +8,7 @@ from core.args import TrainingConfig
 from core.data_loader import data_loader_builder
 from core.logger.default import LoggerDefault
 from core.logger.logger_abc import LoggerABC
+from core.logger.report import report
 from core.model.big_resnet import *
 from core.model.densenet import DenseNet
 from core.model.dsnet import DSNet
@@ -45,3 +46,6 @@ if __name__ == "__main__":
                     n_epochs=100,
                 )
                 runner.run(train_conf, expname=model_name)
+
+            # Once done with one size, make report
+            report(os.path.join("_results", now_str))
