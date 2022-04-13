@@ -95,7 +95,6 @@ class DenseNet(ModelABC):
         self.residual_layers = nn.ModuleList([])
         self.model_n = model_n
         self.device = device
-        self.growthrate = 8
 
         # begining layers
         self.conv1 = nn.Conv2d(3, 16, kernel_size=3, stride=1, padding='same')
@@ -105,6 +104,7 @@ class DenseNet(ModelABC):
         # ResNet blocks [16, 32, 64]
         # first block, 16 channels
         in_channels = 16
+        self.growthrate = 16
         for i in range(self.model_n):
             self.residual_layers.append(BasicBlock(
                 in_channels, self.growthrate).to(device))
@@ -113,6 +113,7 @@ class DenseNet(ModelABC):
 
         # second block, 32 channels
         new_in_channels = 32
+        self.growthrate = 32
         for i in range(self.model_n):
             if i == 0:
                 self.residual_layers.append(
@@ -126,6 +127,7 @@ class DenseNet(ModelABC):
 
         # third block, 64 channels
         new_in_channels = 64
+        self.growthrate = 64
         for i in range(self.model_n):
             if i == 0:
                 self.residual_layers.append(
