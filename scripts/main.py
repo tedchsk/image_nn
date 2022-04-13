@@ -9,6 +9,7 @@ from core.data_loader import data_loader_builder
 from core.logger.default import LoggerDefault
 from core.logger.logger_abc import LoggerABC
 from core.model.big_resnet import *
+from core.model.densenet import DenseNet
 from core.model.model_abc import ModelABC
 from core.model.resnet import ResNet
 from core.runner import Runner
@@ -22,17 +23,12 @@ if __name__ == "__main__":
 
     print("Using GPU" if torch.cuda.is_available() else "Using CPU")
 
-    experiments = [121, 161]
-    for model_num in experiments:
-        model_name = f"densenet{model_num}"
-        model = torch.hub.load(
-            'pytorch/vision:v0.10.0',
-            f"densenet{model_name}",
-            pretrained=False
-        )
+    experiments = [3, 5, 7, 9]
+    for model_n in experiments:
+        model_name = f"Densenet_{model_n}"
         train_conf = TrainingConfig(
-            get_model=model,
-            model_params={},
+            get_model=DenseNet,
+            model_params={"model_n": model_n},
             dataset_builder=D.CIFAR100,
             k_fold=5,
             n_early_stopping=-1,
