@@ -20,7 +20,7 @@ def test_densenet_blocks():
 
 
 def test_densenet_model():
-    sample_data = torch.rand(20, 3, 200, 200)
+    sample_data = torch.rand(20, 3, 32, 32)
     model = DenseNet(3)
 
     output = model(sample_data)
