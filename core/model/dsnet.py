@@ -46,12 +46,12 @@ class BasicBlock(nn.Module):
         self.relu = nn.ReLU(inplace=True)
 
     def forward(self, x: Tensor) -> Tensor:
-        identity = x
+        identity = self.normalization(x)
         outputs = [identity]  # Consisting of output of each layer.
         for (layer, ch_ws) in zip(self.layers, self.channel_wise_w_list):
             output = layer(outputs[-1])
 
-            dense_normalized_inputs = [self.normalization(x) * ch_weight
+            dense_normalized_inputs = [x * ch_weight
                                        for output, ch_weight in zip(outputs, ch_ws)]
             for dense_normalized_input in dense_normalized_inputs:
                 output += dense_normalized_input

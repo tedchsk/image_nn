@@ -50,6 +50,4 @@ if __name__ == "__main__":
 
             # Once done with one size, make report
             df = report(os.path.join("_results", now_str))
-
-            df["model_n"] = df["exp_name"].split("_")
-            print(df.sort_values("model_n").drop("model_n", axis=1).head(100))
+            print(df.head(100))
