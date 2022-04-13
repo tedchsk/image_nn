@@ -32,14 +32,14 @@ print(summarized.head(100))
 df2 = combine_run_training_logs(os.path.join(RESULT_DIR, latest_dir))
 df2 = df2.reset_index()
 df2["fold"] = df2["fold"].apply(int)
-df2["train_acc"] = df2["train_acc"].apply(float)
+# df2["train_acc"] = df2["train_acc"].apply(float)
 df2["val_acc"] = df2["val_acc"].apply(float)
 
 # A bit hacky
-df2["exp_name"] = df2["exp_name"] + "-Train"
-sns_pp = sns.lineplot(data=df2[df2["fold"] == 0],
-                      x="epoch", y="train_acc", hue="exp_name")
-df2["exp_name"] = df2["exp_name"] + "-Valid"
+# df2["exp_name"] = df2["exp_name"] + "-Train"
+# sns_pp = sns.lineplot(data=df2[df2["fold"] == 0],
+# x="epoch", y="train_acc", hue="exp_name")
+df2["exp_name"] = df2["exp_name"] + "_val"
 sns_pp = sns.lineplot(data=df2[df2["fold"] == 0],
                       x="epoch", y="val_acc", hue="exp_name")
 # plt.show()
