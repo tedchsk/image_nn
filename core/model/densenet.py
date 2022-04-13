@@ -110,10 +110,8 @@ class DenseNet(ModelABC):
 
         # ResNet blocks
         for i, layer in enumerate(self.residual_layers):
-            print(i, x.shape)
             x = layer(x)
 
-        print(x.shape)
         # output layers
         x = self.avgpool(x)
         x = torch.flatten(x, 1)

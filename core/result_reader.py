@@ -11,6 +11,10 @@ def combine_run_experiments(run_dir: str) -> pd.DataFrame:
     # For each run_dir + exp
     results = []
     for exp_name in exp_names:
+
+        if "DS_Store" in exp_name:
+            continue  # Macos files, ignoring
+
         exp_dir = os.path.join(run_dir, exp_name)
         result = combine_run_experiment(exp_dir)
         result["exp_name"] = exp_name
@@ -27,7 +31,7 @@ def combine_run_experiment(exp_dir: str) -> pd.DataFrame:
         fold_dir = os.path.join(exp_dir, fold)
 
         if "DS_Store" in fold_dir:
-            continue  # Macos stuff
+            continue  # Macos files, ignoring
 
         # Read three files - logs, summarized, and training_conf (not here for now)
         # For now let's read only logs

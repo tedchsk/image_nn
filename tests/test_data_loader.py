@@ -8,8 +8,8 @@ def test_data_loader_builder():
     config = TrainingConfig()
 
     loaders, sizes = data_loader_builder(config)
-    assert sizes["train"] == 50000
-    assert sizes["test"] == 2000
+    assert sizes["train"] == 45000
+    assert sizes["test"] == 10000
 
     data = loaders["train"].__iter__()
     print(data)
