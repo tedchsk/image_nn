@@ -8,13 +8,28 @@ from core.model.model_abc import ModelABC
 
 
 class BasicBlock(nn.Module):
+    """Basic DenseBlock. Given input [in_channels, height, width], 
+    - First pass through Conv2d(in_channels, outchannels=growthrate) + BatchNorm + ReLU 
+        -> Output dimensions: [growthrate, height, width] (1)
+    - Then, concatenate with the input
+        -> Output dimensions: [in_channels + growthrate, height, width] (2)
+    - Pass through another Conv2d(in_channels + growthrate) + BN + ReLU
+        -> Output dimensions: [growthrate, height, width] (3)
+    - Concatenate again to (2) get the output
+        -> Output dimensions: [(in_channels + growthrate) + growthrate, height, width],
 
-    def __init__(self, inplanes, growthrate: int = 8, stride=1):
+    Caveat: One basic block contains two DenseLayers, so the output channels will be in_channels + 2*growthrate
+
+    Attributes:
+        inplanes: # of Input channels
+        growthrate: Additional channels we'll get from each DenseLayer.
+    """
+
+    def __init__(self, inplanes, growthrate: int = 8):
         super().__init__()
 
-        # This is one different from ResNet
-        self.conv1 = nn.Conv2d(inplanes, growthrate,
-                               stride=stride, kernel_size=1)
+        # This is one different from ResNet (kernel=1 no padding as opposed to kernel=3 & padding=1)
+        self.conv1 = nn.Conv2d(inplanes, growthrate, kernel_size=1)
         self.bn1 = nn.BatchNorm2d(growthrate)
         self.relu = nn.ReLU(inplace=True)
 
@@ -22,27 +37,30 @@ class BasicBlock(nn.Module):
                                kernel_size=3, padding=1)
         self.bn2 = nn.BatchNorm2d(growthrate)
 
-        # Change started
         self.block1 = nn.Sequential(self.conv1, self.bn1, self.relu)
         self.block2 = nn.Sequential(self.conv2, self.bn2)
 
     def forward(self, x: Tensor) -> Tensor:
         identity = x
-        # Change started
+        # Concatenate instead of adding.
         out = torch.cat((self.block1(x), identity), 1)
         out = torch.cat((self.block2(out), out), 1)
         return self.relu(out)
 
 
 class TransitionBlock(nn.Module):
+    """A transition block to reduce channels of [input + growthrate * n, w, h] to [new_input_channels, w, h]
+
+    Attributes:
+        inplanes: # of Input channels
+        outplanes: # of Output channels
+    """
+
     def __init__(self, inplanes, outplanes):
         super().__init__()
 
-        # This is one different from ResNet
         self.conv1 = nn.Conv2d(inplanes, outplanes, stride=1, kernel_size=1)
         self.avgpool = nn.AvgPool2d(kernel_size=2, stride=2)
-
-        # Change started
         self.transition = nn.Sequential(self.conv1, self.avgpool)
 
     def forward(self, x: Tensor) -> Tensor:
@@ -50,6 +68,27 @@ class TransitionBlock(nn.Module):
 
 
 class DenseNet(ModelABC):
+    """Defining the whole model. 
+    In high level: 
+        - Input -> [batch, 3, height, width]
+        - Beginning Layer -> [batch, 3, height, width]
+
+        - First Block: n*BasicBlock(16) -> [batch, 16 + 2n * growthrate, height, width]
+        - Transition: TransitionBlock(16 + 2n * growthrate, 32) -> [batch, 32, height, width]
+
+        - Second Block: n*BasicBlock(32) -> [batch, 32 + 2n * growthrate, height, width]
+        - Transition: TransitionBlock(32 + 2n * growthrate, 64) -> [batch, 32, height, width]
+
+        - Third Block: n*BasicBlock(16) -> [batch, 64 + 2n * growthrate, height, width]
+
+        - FinalLayer: AdaptiveAvgPool2d + Linear(64 + 2n * growthrate, num_classes)
+
+    Attributes:
+        model_n: # of layers, based on CIFAR-ResNet 
+        num_classes: Number of classes
+        device: needed for GPU vs CPU.
+    """
+
     def __init__(self, model_n, num_classes: int = 10, device=torch.device("cpu")):
         super().__init__()
 
@@ -102,7 +141,6 @@ class DenseNet(ModelABC):
         self.fc = nn.Linear(in_channels, num_classes)
 
     def forward(self, x: Tensor) -> Tensor:
-
         # begining layers
         x = self.conv1(x)
         x = self.bn1(x)
