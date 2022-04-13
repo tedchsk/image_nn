@@ -48,7 +48,7 @@ class BasicBlock(nn.Module):
     def forward(self, x: Tensor) -> Tensor:
         identity = self.normalization(x)
         # Consisting of output of each layer.
-        outputs = nn.ModuleList([identity])
+        outputs = []
         for (layer, ch_ws) in zip(self.layers, self.channel_wise_w_list):
             output = layer(outputs[-1])
 
