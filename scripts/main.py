@@ -22,22 +22,20 @@ if __name__ == "__main__":
 
     print("Using GPU" if torch.cuda.is_available() else "Using CPU")
 
-    experiments = [
-            ("ResNet18", ResNet18),
-            ("ResNet34", ResNet34),
-            ("ResNet50", ResNet50),
-            ("ResNet70", ResNet70),
-            ("ResNet101", ResNet101)
-            ]
-
-    for (model_name, model) in experiments:
+    experiments = [121, 161]
+    for model_num in experiments:
+        model_name = f"densenet{model_num}"
+        model = torch.hub.load(
+            'pytorch/vision:v0.10.0',
+            f"densenet{model_name}",
+            pretrained=False
+        )
         train_conf = TrainingConfig(
-                get_model=model,
-                model_params={},
-                dataset_builder=D.CIFAR100,
-                k_fold=5,
-                n_early_stopping=-1,
-                milestones=[90, 135]
-                )
+            get_model=model,
+            model_params={},
+            dataset_builder=D.CIFAR100,
+            k_fold=5,
+            n_early_stopping=-1,
+            milestones=[90, 135]
+        )
         runner.run(train_conf, expname=model_name)
-
