@@ -43,6 +43,8 @@ class TrainingConfig:
     # If this is set, k_fold will be ignored (will only run 1 fold)
     kth_fold: int = -1
 
+    is_cuda: bool = False
+
     def build_optimizer(self, params):
         return self.optimizer(params, lr=self.lr, momentum=self.momentum, weight_decay=self.weight_decay)
 

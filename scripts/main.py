@@ -44,6 +44,7 @@ if __name__ == "__main__":
                     n_early_stopping=-1,
                     milestones=[50, 75],
                     n_epochs=2,
+                    is_cuda=torch.cuda.is_available()
                 )
                 runner.run(train_conf, expname=model_name)
 

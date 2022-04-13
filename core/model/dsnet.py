@@ -25,7 +25,7 @@ class BasicBlock(nn.Module):
         n_models: Number of layers. Have to specify here as we need to connect all the layers
     """
 
-    def __init__(self, inplanes, n_models):
+    def __init__(self, inplanes, n_models, device=torch.device("cpu")):
         super().__init__()
 
         self.layers = []
@@ -38,7 +38,7 @@ class BasicBlock(nn.Module):
 
             # One variable for each channel for each time, [[w00], [w10, w11], [w20, w21, w22], ...]
             self.channel_wise_w_list.append(
-                [torch.autograd.Variable(torch.randn(1, inplanes, 1, 1), requires_grad=True)
+                [torch.autograd.Variable(torch.randn(1, inplanes, 1, 1).to(device), requires_grad=True)
                  for _ in range(i+1)]
             )
 
