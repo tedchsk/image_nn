@@ -39,7 +39,7 @@ if __name__ == "__main__":
                     get_model=model,
                     model_params={"model_n": model_size, "device": device},
                     dataset_builder=D.CIFAR10,
-                    k_fold=1,
+                    k_fold=k_fold_n,
                     kth_fold=k,
                     n_early_stopping=-1,
                     milestones=[50, 75],
