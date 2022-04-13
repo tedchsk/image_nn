@@ -1,10 +1,12 @@
 
 import os
 import math
+
+from pandas.core.frame import DataFrame
 from core.result_reader import combine_run_experiments
 
 
-def report(run_dir):
+def report(run_dir) -> DataFrame:
     df = combine_run_experiments(run_dir)
 
     for col in ["train", "test", "val"]:
@@ -20,4 +22,4 @@ def report(run_dir):
         }
     )
 
-    print(summarized.head(100))
+    return summarized
