@@ -127,7 +127,7 @@ class DSNet(ModelABC):
         self.device = device
 
         # begining layers
-        self.conv1 = nn.Conv2d(3, 16, kernel_size=3, stride=1, padding='same')
+        self.conv1 = nn.Conv2d(3, 16, kernel_size=3, stride=1, padding=1)
         self.bn1 = nn.BatchNorm2d(16)
         self.relu = nn.ReLU(inplace=True)
 
