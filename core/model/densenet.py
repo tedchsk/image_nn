@@ -79,7 +79,7 @@ class DenseNet(ModelABC):
         - Second Block: n*BasicBlock(32) -> [batch, 32 + 2n * growthrate, height, width]
         - Transition: TransitionBlock(32 + 2n * growthrate, 64) -> [batch, 32, height, width]
 
-        - Third Block: n*BasicBlock(16) -> [batch, 64 + 2n * growthrate, height, width]
+        - Third Block: n*BasicBlock(64) -> [batch, 64 + 2n * growthrate, height, width]
 
         - FinalLayer: AdaptiveAvgPool2d + Linear(64 + 2n * growthrate, num_classes)
 
