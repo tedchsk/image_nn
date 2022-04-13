@@ -131,15 +131,18 @@ class DSNet(ModelABC):
 
         # ResNet blocks [16, 32, 64]
         # first block, 16 channels
-        self.residual_layers.append(BasicBlock(16, self.model_n).to(device))
+        self.residual_layers.append(BasicBlock(
+            16, self.model_n, device).to(device))
         self.residual_layers.append(TransitionBlock(16, 32).to(device))
 
         # second block, 32 channels
-        self.residual_layers.append(BasicBlock(32, self.model_n).to(device))
+        self.residual_layers.append(BasicBlock(
+            32, self.model_n, device).to(device))
         self.residual_layers.append(TransitionBlock(32, 64).to(device))
 
         # third block, 64 channels
-        self.residual_layers.append(BasicBlock(64, self.model_n).to(device))
+        self.residual_layers.append(BasicBlock(
+            64, self.model_n, device).to(device))
         self.residual_layers.append(TransitionBlock(64, 64).to(device))
 
         # output layers
