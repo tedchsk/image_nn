@@ -42,8 +42,8 @@ if __name__ == "__main__":
                     k_fold=k_fold_n,
                     kth_fold=k,
                     n_early_stopping=-1,
-                    milestones=[50, 75],
-                    n_epochs=100,
+                    milestones=[90, 135],
+                    n_epochs=180,
                     is_cuda=torch.cuda.is_available()
                 )
                 runner.run(train_conf, expname=model_name)

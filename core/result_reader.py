@@ -3,6 +3,45 @@ import numpy as np
 import pandas as pd
 
 
+def combine_run_training_logs(run_dir: str) -> pd.DataFrame:
+    # Get all experiment names
+    exp_names = os.listdir(run_dir)
+
+    # For each run_dir + exp
+    results = []
+    for exp_name in exp_names:
+
+        if "DS_Store" in exp_name:
+            continue  # Macos files, ignoring
+
+        exp_dir = os.path.join(run_dir, exp_name)
+        result = get_training_logs(exp_dir)
+        result["exp_name"] = exp_name
+        results.append(result)
+
+    return pd.concat(results)
+
+
+def get_training_logs(exp_dir: str) -> pd.DataFrame:
+    fold_dirs = os.listdir(exp_dir)
+
+    dfs = []
+    for fold in fold_dirs:
+        fold_dir = os.path.join(exp_dir, fold)
+
+        if "DS_Store" in fold_dir:
+            continue  # Macos files, ignoring
+
+        training_logs = np.load(os.path.join(
+            fold_dir, "logs.npy"), allow_pickle=True).flat[0]
+
+        df = pd.DataFrame.from_dict(training_logs)
+        df["fold"] = fold
+        dfs.append(df)
+
+    return pd.concat(dfs)
+
+
 def combine_run_experiments(run_dir: str) -> pd.DataFrame:
 
     # Get all experiment names
