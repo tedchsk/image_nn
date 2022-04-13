@@ -10,6 +10,7 @@ from core.logger.default import LoggerDefault
 from core.logger.logger_abc import LoggerABC
 from core.model.big_resnet import *
 from core.model.densenet import DenseNet
+from core.model.dsnet import DSNet
 from core.model.model_abc import ModelABC
 from core.model.resnet import ResNet
 from core.runner import Runner
@@ -23,15 +24,24 @@ if __name__ == "__main__":
 
     print("Using GPU" if torch.cuda.is_available() else "Using CPU")
 
-    experiments = [3, 5, 7, 9]
-    for model_n in experiments:
-        model_name = f"Densenet_{model_n}"
-        train_conf = TrainingConfig(
-            get_model=DenseNet,
-            model_params={"model_n": model_n, "device": device},
-            dataset_builder=D.CIFAR10,
-            k_fold=5,
-            n_early_stopping=-1,
-            milestones=[90, 135]
-        )
-        runner.run(train_conf, expname=model_name)
+    model_sizes = [3, 5, 7, 9]
+    models = [DSNet, DenseNet, ResNet]
+    model_names = ["DSNet", "DenseNet", "ResNet"]
+
+    k_fold_n = 5
+    # Put the k fold loop outside so that all the model will be run at least once.
+    for k in range(5):
+        for model_size in model_sizes:
+            for model, model_name in zip(models, model_names):
+                model_name = f"{model_name}_{model_size}"
+                train_conf = TrainingConfig(
+                    get_model=model,
+                    model_params={"model_n": model_size, "device": device},
+                    dataset_builder=D.CIFAR10,
+                    k_fold=1,
+                    kth_fold=k,
+                    n_early_stopping=-1,
+                    milestones=[50, 75],
+                    n_epochs=100,
+                )
+                runner.run(train_conf, expname=model_name)

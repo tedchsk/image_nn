@@ -34,6 +34,9 @@ class Runner:
         data_loaders, dataset_sizes = data_loader_builder(train_conf)
 
         for k in range(train_conf.k_fold):
+            if train_conf.kth_fold > -1:
+                k = train_conf.kth_fold
+
             # Set random to something else
             torch.manual_seed(SEED_FOR_FOLDS[k])
 
@@ -134,11 +137,16 @@ class Runner:
 
             test_info["train_time"] = np.round(
                 time.time() - fold_start_time, 5)
-            test_info["n_epochs"] = epoch # The number of epochs might changed due to early stopping.
+            # The number of epochs might changed due to early stopping.
+            test_info["n_epochs"] = epoch
             print("Training Done - ", test_info)
 
             # For now just report the last training_info, better way is to get minimum acc explicitly.
-            logger.on_training_end(training_info| test_info, train_conf)
+            logger.on_training_end(training_info | test_info, train_conf)
+
+            if train_conf.kth_fold > -1:
+                print(f"Done for kth fold - {train_conf.kth_fold}")
+                return
 
     def evaluate_test_set(self, test_loader, model, optimizer, loss_fn):
 
