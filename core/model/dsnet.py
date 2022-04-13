@@ -31,10 +31,10 @@ class BasicBlock(nn.Module):
         self.layers = []
         self.channel_wise_w_list = []  # Result is list of list of weights at each steps
         for i in range(n_models * 2):
-            self.layers = nn.Sequential(
+            self.layers.append(nn.Sequential(
                 nn.Conv2d(inplanes, inplanes, kernel_size=3, padding=1),
                 nn.BatchNorm2d(inplanes)
-            )
+            ))
 
             # One variable for each channel for each time, [[w00], [w10, w11], [w20, w21, w22], ...]
             self.channel_wise_w_list.append(
@@ -51,6 +51,7 @@ class BasicBlock(nn.Module):
         for (layer, ch_ws) in zip(self.layers, self.channel_wise_w_list):
             output = layer(outputs[-1])
 
+            assert len(outputs) == len(ch_ws), "Length not equal"
             dense_normalized_inputs = [x * ch_weight
                                        for output, ch_weight in zip(outputs, ch_ws)]
             for dense_normalized_input in dense_normalized_inputs:
