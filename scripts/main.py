@@ -28,8 +28,8 @@ if __name__ == "__main__":
         model_name = f"Densenet_{model_n}"
         train_conf = TrainingConfig(
             get_model=DenseNet,
-            model_params={"model_n": model_n},
-            dataset_builder=D.CIFAR100,
+            model_params={"model_n": model_n, "device": device},
+            dataset_builder=D.CIFAR10,
             k_fold=5,
             n_early_stopping=-1,
             milestones=[90, 135]
