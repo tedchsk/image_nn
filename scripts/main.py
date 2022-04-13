@@ -37,8 +37,9 @@ if __name__ == "__main__":
                 model_name = f"{model_name}_{model_size}"
                 train_conf = TrainingConfig(
                     get_model=model,
-                    model_params={"model_n": model_size, "device": device},
-                    dataset_builder=D.CIFAR10,
+                    model_params={"model_n": model_size,
+                                  "device": device, "num_classes": 100},
+                    dataset_builder=D.CIFAR100,
                     k_fold=k_fold_n,
                     kth_fold=k,
                     n_early_stopping=-1,
