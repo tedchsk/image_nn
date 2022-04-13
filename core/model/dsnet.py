@@ -28,7 +28,7 @@ class BasicBlock(nn.Module):
     def __init__(self, inplanes, n_models, device=torch.device("cpu")):
         super().__init__()
 
-        self.layers = []
+        self.layers = nn.ModuleList([])
         self.channel_wise_w_list = []  # Result is list of list of weights at each steps
         for i in range(n_models * 2):
             self.layers.append(nn.Sequential(
@@ -47,7 +47,8 @@ class BasicBlock(nn.Module):
 
     def forward(self, x: Tensor) -> Tensor:
         identity = self.normalization(x)
-        outputs = [identity]  # Consisting of output of each layer.
+        # Consisting of output of each layer.
+        outputs = nn.ModuleList([identity])
         for (layer, ch_ws) in zip(self.layers, self.channel_wise_w_list):
             output = layer(outputs[-1])
 
