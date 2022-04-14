@@ -1,4 +1,11 @@
-## Neural Network Code Planning
+## A Deeper Look into Dense Shortcut Nets
+
+In this project, we will further investigate a recent shortcut-connection model that
+tries to combine the advantages of ResNet with those of DenseNet. Specifically, it
+tries to achieve DenseNet’s high performance, while keeping the memory footprint
+as low as ResNet. We will try out alternative shortcut connections, different
+backbone structures, extend the ablation studies done in the paper, and experiment
+with the model’s performance in a more diverse set of datasets.
 
 ### Running Method
 
