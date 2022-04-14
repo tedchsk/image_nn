@@ -7,6 +7,7 @@ as low as ResNet. We will try out alternative shortcut connections, different
 backbone structures, extend the ablation studies done in the paper, and experiment
 with the model’s performance in a more diverse set of datasets.
 
+---
 
 ### Ways to run the code
 
@@ -35,6 +36,8 @@ $ conda env create --name python39 --file environment.yml
 $ conda activate python39
 $ pip install -e . # so that conda sees the project's code.
 ```
+
+---
 
 ### Code Structures
 
@@ -126,6 +129,9 @@ classDiagram
   Logger --> TrainingConfigsStr_npy_file
   
   ```
+  
+---
+  
 ### Experimentation (high-level)
 
 "A experiment" is defined as a one running flow with fixed data, model, hyperparameters.
@@ -147,7 +153,7 @@ A combination of these "experiments" is called "run". Most of the time, we want 
 **Result visualization**  
     - Follow this notebook on how to visualize the training result [[Link](http://35.204.111.135:8888/notebooks/_notebooks/Training%20Logs%20Dashboard.ipynb)]
 
-
+---
 
 ### Installation Notes on GCP
 (GCP -> Google Cloud Platform).  
