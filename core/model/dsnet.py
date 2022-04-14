@@ -30,8 +30,11 @@ class BasicBlock(nn.Module):
 
         self.layers = nn.ModuleList([])
         self.channel_wise_w_list = []  # Result is list of list of weights at each steps
-        for i in range(n_models * 2):
+        for i in range(n_models):
             self.layers.append(nn.Sequential(
+                nn.Conv2d(inplanes, inplanes, kernel_size=3, padding=1),
+                nn.BatchNorm2d(inplanes),
+                nn.ReLU(inplace=True),
                 nn.Conv2d(inplanes, inplanes, kernel_size=3, padding=1),
                 nn.BatchNorm2d(inplanes)
             ))
