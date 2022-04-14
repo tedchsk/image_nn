@@ -30,6 +30,7 @@ class BasicBlock(nn.Module):
 
         self.layers = nn.ModuleList([])
         self.channel_wise_w_list = []  # Result is list of list of weights at each steps
+        self.norm_layers = []
         for i in range(n_models):
             self.layers.append(nn.Sequential(
                 nn.Conv2d(inplanes, inplanes, kernel_size=3, padding=1),
@@ -39,24 +40,26 @@ class BasicBlock(nn.Module):
                 nn.BatchNorm2d(inplanes)
             ))
 
+            self.norm_layers.append(
+                [nn.GroupNorm(num_groups=4, num_channels=inplanes) for _ in range(i+1)]
+            )
+
             # One variable for each channel for each time, [[w00], [w10, w11], [w20, w21, w22], ...]
             self.channel_wise_w_list.append(
                 [torch.autograd.Variable(torch.randn(1, inplanes, 1, 1).to(device), requires_grad=True)
                  for _ in range(i+1)]
             )
 
-        self.normalization = nn.BatchNorm2d(inplanes)
         self.relu = nn.ReLU(inplace=True)
 
     def forward(self, x: Tensor) -> Tensor:
-        identity = self.normalization(x)
         # Consisting of output of each layer.
-        outputs = [identity]
-        for (layer, ch_ws) in zip(self.layers, self.channel_wise_w_list):
+        outputs = [x]
+        for (layer, ch_ws, norm_layer) in zip(self.layers, self.channel_wise_w_list, self.norm_layers):
             output = layer(outputs[-1])
 
             assert len(outputs) == len(ch_ws), "Length not equal"
-            dense_normalized_inputs = [x * ch_weight
+            dense_normalized_inputs = [norm_layer(x) * ch_weight
                                        for output, ch_weight in zip(outputs, ch_ws)]
             for dense_normalized_input in dense_normalized_inputs:
                 output += dense_normalized_input
