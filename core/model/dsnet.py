@@ -59,8 +59,8 @@ class BasicBlock(nn.Module):
             output = layer(outputs[-1])
 
             assert len(outputs) == len(ch_ws), "Length not equal"
-            dense_normalized_inputs = [norm_layer(x) * ch_weight
-                                       for output, ch_weight in zip(outputs, ch_ws)]
+            dense_normalized_inputs = [norm(x) * ch_weight
+                                       for output, ch_weight, norm in zip(outputs, ch_ws, norm_layer)]
             for dense_normalized_input in dense_normalized_inputs:
                 output += dense_normalized_input
 
