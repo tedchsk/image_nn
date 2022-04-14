@@ -7,7 +7,9 @@ as low as ResNet. We will try out alternative shortcut connections, different
 backbone structures, extend the ablation studies done in the paper, and experiment
 with the model’s performance in a more diverse set of datasets.
 
-### Running Method
+![image](https://d3i71xaburhd42.cloudfront.net/ada46715b2f95e299a71eaff48d5af1c0a3aabb3/3-Figure1-1.png)
+
+### Ways to run the code
 
 ##### Through Jupyter Notebook
 
@@ -23,6 +25,17 @@ Feel free to add your own in **"_notebooks"** folder
 
 **Note**: the underscore "_" is used for git to ignore these folders.
 
+#### Through your own local machines or environment
+- Make sure you have conda in your local machine, then follow the steps below.
+
+```bash
+# From the project root directory ...
+$ make envload # which is equivalent to the line below.
+$ conda env create --name python39 --file environment.yml
+
+$ conda activate python39
+$ pip install -e . # so that conda sees the project's code.
+```
 
 ### Code Structures
 
@@ -114,17 +127,6 @@ classDiagram
   Logger --> TrainingConfigsStr_npy_file
   
   ```
-  
-### Python Environment Setup
-
-```bash
-$ make envload # which is equivalent to the line below.
-$ conda env create --name python39 --file environment.yml
-
-$ conda activate python39
-$ pip install -e . # so that conda sees the project's code.
-```
-
 ### Experimentation (high-level)
 
 "A experiment" is defined as a one running flow with fixed data, model, hyperparameters.
@@ -154,4 +156,5 @@ A combination of these "experiments" is called "run". Most of the time, we want 
 - Nvidia drivers: [[Link](https://cloud.google.com/compute/docs/gpus/install-drivers-gpu)]  
 - Jupyter on GCP: [[Link](https://towardsdatascience.com/running-jupyter-notebook-in-google-cloud-platform-in-15-min-61e16da34d52)]  
 - Add conda env to Jupyter: [[Link](https://medium.com/@nrk25693/how-to-add-your-conda-environment-to-your-jupyter-notebook-in-just-4-steps-abeab8b8d084)]  
+
 
