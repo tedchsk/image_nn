@@ -25,9 +25,9 @@ if __name__ == "__main__":
 
     print("Using GPU" if torch.cuda.is_available() else "Using CPU")
 
-    model_sizes = [3, 5, 7, 9]
-    models = [DSNet, DenseNet, ResNet][:1]
-    model_names = ["DSNet", "DenseNet", "ResNet"][:1]
+    model_sizes = [3, 5, 7]
+    models = [ResNet, DenseNet, DSNet]
+    model_names = ["ResNet", "DenseNet", "DsNet"]
 
     k_fold_n = 5
     # Put the k fold loop outside so that all the model will be run at least once.
