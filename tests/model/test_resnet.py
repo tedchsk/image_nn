@@ -2,7 +2,6 @@
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-from core.model import model_abc
 from core.model.resnet import ResNet
 
 
