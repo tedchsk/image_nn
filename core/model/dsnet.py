@@ -1,13 +1,11 @@
-# from https://pytorch.org/hub/pytorch_vision_resnet/
 import torch
-from torch import nn
-from torch import Tensor
+import torch.nn as nn
+import torchvision
 import torch.nn.functional as F
+from torch import Tensor
+from typing import Type, Any, Callable, Union, List, Optional
 
-from core.model.model_abc import ModelABC
-
-
-class BasicBlock(nn.Module):
+class _DenseBlock(nn.Module):
     """Basic DSNet. Given input [in_channels, height, width], 
     - First pass through Conv2d(in_channels, in_channels) + BatchNorm + ReLU 
         -> Output dimensions: [in_channels, height, width] (1)
@@ -17,51 +15,79 @@ class BasicBlock(nn.Module):
         -> Output dimensions: [in_channels, height, width] (3)
     - Add again with ("normalized + channel-wise weight")(1) and ("normalized + channel-wise weight")(2)
         -> Output dimensions: [in_channels, height, width]
-
     Caveat: The normalization and channel-wise weight is not shared.
-
     Attributes:
         in_planes: # of Input channels
         n_models: Number of layers. Have to specify here as we need to connect all the layers
     """
 
-    def __init__(self, inplanes, n_models, device=torch.device("cpu")):
+    def __init__(self, planes, n_models, device=torch.device("cpu"), stride=1, down=False, downsample=None):
         super().__init__()
 
         self.layers = nn.ModuleList([])
         self.channel_wise_w_list = []  # Result is list of list of weights at each steps
-        self.norm_layers = []
+        self.norm_layers = nn.ModuleList([])
+        self.downsample = downsample
+        
+        if down:
+            inplanes = planes//2
+            self.downsample = nn.Conv2d(inplanes, planes, kernel_size=1, stride=stride)
+        else:
+            inplanes = planes
+
         for i in range(n_models):
+            if i == 0:
+                first_conv = nn.Conv2d(inplanes, planes, kernel_size=3, padding=1, stride=stride)
+            else:
+                first_conv = nn.Conv2d(planes, planes, kernel_size=3, padding=1, stride=1)
+            
             self.layers.append(nn.Sequential(
-                nn.Conv2d(inplanes, inplanes, kernel_size=3, padding=1),
-                nn.BatchNorm2d(inplanes),
+                first_conv,
+                nn.BatchNorm2d(planes),
                 nn.ReLU(inplace=True),
-                nn.Conv2d(inplanes, inplanes, kernel_size=3, padding=1),
-                nn.BatchNorm2d(inplanes)
+                nn.Conv2d(planes, planes, kernel_size=3, padding=1),
+                nn.BatchNorm2d(planes)
             ))
 
             self.norm_layers.append(
-                [nn.GroupNorm(num_groups=4, num_channels=inplanes).to(device) for _ in range(i+1)]
+                nn.ModuleList([nn.GroupNorm(num_groups=4, num_channels=planes).to(device) for _ in range(i+1)])
             )
 
             # One variable for each channel for each time, [[w00], [w10, w11], [w20, w21, w22], ...]
             self.channel_wise_w_list.append(
-                [torch.autograd.Variable(torch.randn(1, inplanes, 1, 1).to(device), requires_grad=True)
+                [nn.Parameter(torch.randn(1, planes, 1, 1).to(device), requires_grad=True)
                  for _ in range(i+1)]
             )
-
+            
+            for j, p_list in enumerate(self.channel_wise_w_list):
+                for k, p in enumerate(p_list):
+                    self.register_parameter("channel_weight_{}_{}".format(j,k), p)
+                       
         self.relu = nn.ReLU(inplace=True)
 
     def forward(self, x: Tensor) -> Tensor:
+
+
+        if self.downsample is not None:
+            original_x = x
+            x = self.downsample(x)
+        
         # Consisting of output of each layer.
         outputs = [x]
-        for (layer, ch_ws, norm_layer) in zip(self.layers, self.channel_wise_w_list, self.norm_layers):
-            output = layer(outputs[-1])
+        
+        for i,(layer, ch_ws, norm_layer) in enumerate\
+        (zip(self.layers, self.channel_wise_w_list, self.norm_layers)):
+            
+            if i==0 and self.downsample is not None:
+                output = layer(original_x)
+            else:
+                output = layer(outputs[-1])
 
             assert len(outputs) == len(ch_ws), "Length not equal"
-            dense_normalized_inputs = [norm(x) * ch_weight
-                                       for output, ch_weight, norm in zip(outputs, ch_ws, norm_layer)]
+            dense_normalized_inputs = [norm(o) * ch_weight
+                                       for o, ch_weight, norm in zip(outputs, ch_ws, norm_layer)]
             for dense_normalized_input in dense_normalized_inputs:
+
                 output += dense_normalized_input
 
             output = self.relu(output)
@@ -70,55 +96,18 @@ class BasicBlock(nn.Module):
         return outputs[-1]
 
 
-class TransitionBlock(nn.Module):
-    """A transition block to reduce channels of [input, w, h] to [outplanes, w//2, h//2]
 
-    Attributes:
-        inplanes: # of Input channels
-        outplanes: # of Output channels
-    """
-
-    def __init__(self, inplanes, outplanes):
-        super().__init__()
-
-        self.conv1 = nn.Conv2d(
-            inplanes, outplanes, stride=2, kernel_size=3, padding=1)
-        self.bn1 = nn.BatchNorm2d(outplanes)
-        self.relu = nn.ReLU(inplace=True)
-        self.conv2 = nn.Conv2d(outplanes, outplanes, kernel_size=3, padding=1)
-        self.bn2 = nn.BatchNorm2d(outplanes)
-
-        self.block = nn.Sequential(
-            self.conv1, self.bn1, self.relu, self.conv2, self.bn2)
-
-        self.downsample = nn.Conv2d(
-            inplanes, outplanes, kernel_size=1, stride=2)
-
-    def forward(self, x: Tensor) -> Tensor:
-        identity = x
-        if self.downsample is not None:
-            identity = self.downsample(x)
-
-        out = self.block(x) + identity
-        return self.relu(out)
-
-
-class DSNet(ModelABC):
+class DSNet(nn.Module):
     """Defining the whole model. 
     In high level: 
         - Input -> [batch, 3, height, width]
         - Beginning Layer -> [batch, 3, height, width]
-
-        - First Block: n*BasicBlock(16) -> [batch, 16, height, width]
+        - First Block: n*_DenseBlock(16) -> [batch, 16, height, width]
         - Transition: TransitionBlock(16, 32) -> [batch, 32, height, width]
-
-        - Second Block: n*BasicBlock(32) -> [batch, 32, height, width]
+        - Second Block: n*_DenseBlock(32) -> [batch, 32, height, width]
         - Transition: TransitionBlock(32, 64) -> [batch, 32, height, width]
-
-        - Third Block: n*BasicBlock(64) -> [batch, 64, height, width]
-
+        - Third Block: n*_DenseBlock(64) -> [batch, 64, height, width]
         - FinalLayer: AdaptiveAvgPool2d + Linear(64, num_classes)
-
     Attributes:
         model_n: # of layers, based on CIFAR-ResNet 
         num_classes: Number of classes
@@ -139,19 +128,14 @@ class DSNet(ModelABC):
 
         # ResNet blocks [16, 32, 64]
         # first block, 16 channels
-        self.residual_layers.append(BasicBlock(
-            16, self.model_n, device).to(device))
-        self.residual_layers.append(TransitionBlock(16, 32).to(device))
-
+        self.residual_layers.append(_DenseBlock(16, self.model_n, device).to(device))
+        
         # second block, 32 channels
-        self.residual_layers.append(BasicBlock(
-            32, self.model_n, device).to(device))
-        self.residual_layers.append(TransitionBlock(32, 64).to(device))
+        self.residual_layers.append(_DenseBlock(32, self.model_n, device, stride=2, down=True).to(device))
 
         # third block, 64 channels
-        self.residual_layers.append(BasicBlock(
-            64, self.model_n, device).to(device))
-        self.residual_layers.append(TransitionBlock(64, 64).to(device))
+        self.residual_layers.append(_DenseBlock(64, self.model_n, device, stride=2, down=True).to(device))
+
 
         # output layers
         self.avgpool = nn.AdaptiveAvgPool2d((1, 1))

@@ -1,160 +1,150 @@
-# from https://pytorch.org/hub/pytorch_vision_resnet/
+# Implementation from (with modifications): 
+# https://github.com/pytorch/vision/blob/6db1569c89094cf23f3bc41f79275c45e9fcb3f3/torchvision/models/densenet.py#L126
 import torch
-from torch import nn
-from torch import Tensor
+import torch.nn as nn
+import torchvision
 import torch.nn.functional as F
+from torch import Tensor
+from collections import OrderedDict
+from typing import Type, Any, Callable, Union, List, Optional
 
-from core.model.model_abc import ModelABC
+class _DenseLayer(nn.Module):
+    def __init__(self, num_input_features, growth_rate, bn_size):
+        super(_DenseLayer, self).__init__()
+        self.add_module('norm1', nn.BatchNorm2d(num_input_features)),
+        self.add_module('relu1', nn.ReLU(inplace=True)),
+        self.add_module('conv1', nn.Conv2d(num_input_features, bn_size *
+                                           growth_rate, kernel_size=1, stride=1,
+                                           bias=False)),
+        self.add_module('norm2', nn.BatchNorm2d(bn_size * growth_rate)),
+        self.add_module('relu2', nn.ReLU(inplace=True)),
+        self.add_module('conv2', nn.Conv2d(bn_size * growth_rate, growth_rate,
+                                           kernel_size=3, stride=1, padding=1,
+                                           bias=False)),
+
+    def bn_function(self, inputs):
+        # type: (List[Tensor]) -> Tensor
+        concated_features = torch.cat(inputs, 1)
+        bottleneck_output = self.conv1(self.relu1(self.norm1(concated_features)))  # noqa: T484
+        return bottleneck_output
+
+    # todo: rewrite when torchscript supports any
+    def any_requires_grad(self, input):
+        # type: (List[Tensor]) -> bool
+        for tensor in input:
+            if tensor.requires_grad:
+                return True
+        return False
 
 
-class BasicBlock(nn.Module):
-    """Basic DenseBlock. Given input [in_channels, height, width], 
-    - First pass through Conv2d(in_channels, outchannels=growthrate) + BatchNorm + ReLU 
-        -> Output dimensions: [growthrate, height, width] (1)
-    - Then, concatenate with the input
-        -> Output dimensions: [in_channels + growthrate, height, width] (2)
-    - Pass through another Conv2d(in_channels + growthrate) + BN + ReLU
-        -> Output dimensions: [growthrate, height, width] (3)
-    - Concatenate again to (2) get the output
-        -> Output dimensions: [(in_channels + growthrate) + growthrate, height, width],
+    # torchscript does not yet support *args, so we overload method
+    # allowing it to take either a List[Tensor] or single Tensor
+    def forward(self, input):  # noqa: F811
+        if isinstance(input, Tensor):
+            prev_features = [input]
+        else:
+            prev_features = input
 
-    Caveat: One basic block contains two DenseLayers, so the output channels will be in_channels + 2*growthrate
+        bottleneck_output = self.bn_function(prev_features)
 
-    Attributes:
-        inplanes: # of Input channels
-        growthrate: Additional channels we'll get from each DenseLayer.
+        return self.conv2(self.relu2(self.norm2(bottleneck_output)))
+
+
+class _DenseBlock(nn.ModuleDict):
+    _version = 2
+
+    def __init__(self, num_layers, num_input_features, bn_size, growth_rate):
+        super(_DenseBlock, self).__init__()
+        for i in range(num_layers):
+            layer = _DenseLayer(
+                num_input_features + i * growth_rate,
+                growth_rate=growth_rate,
+                bn_size=bn_size
+            )
+            self.add_module('denselayer%d' % (i + 1), layer)
+
+    def forward(self, init_features):
+        features = [init_features]
+        for name, layer in self.items():
+            new_features = layer(features)
+            features.append(new_features)
+        return torch.cat(features, 1)
+
+
+class _Transition(nn.Sequential):
+    def __init__(self, num_input_features, num_output_features):
+        super(_Transition, self).__init__()
+        self.add_module('norm', nn.BatchNorm2d(num_input_features))
+        self.add_module('relu', nn.ReLU(inplace=True))
+        self.add_module('conv', nn.Conv2d(num_input_features, num_output_features,
+                                          kernel_size=1, stride=1, bias=False))
+        self.add_module('pool', nn.AvgPool2d(kernel_size=2, stride=2))
+
+
+class DenseNet(nn.Module):
+    r"""Densenet-BC model class, based on
+    `"Densely Connected Convolutional Networks" <https://arxiv.org/pdf/1608.06993.pdf>`_
+    Args:
+        growth_rate (int) - how many filters to add each layer (`k` in paper)
+        block_config (list of 4 ints) - how many layers in each pooling block
+        num_init_features (int) - the number of filters to learn in the first convolution layer
+        bn_size (int) - multiplicative factor for number of bottle neck layers
+          (i.e. bn_size * k features in the bottleneck layer)
+        num_classes (int) - number of classification classes
+          but slower. Default: *False*. See `"paper" <https://arxiv.org/pdf/1707.06990.pdf>`_
     """
 
-    def __init__(self, inplanes, growthrate: int = 8):
-        super().__init__()
+    def __init__(self, growth_rate=32, block_config=(6, 12, 24, 16),
+                 num_init_features=64, bn_size=4, num_classes=1000):
 
-        # This is one different from ResNet (kernel=1 no padding as opposed to kernel=3 & padding=1)
-        self.conv1 = nn.Conv2d(inplanes, growthrate, kernel_size=1)
-        self.bn1 = nn.BatchNorm2d(growthrate)
-        self.relu = nn.ReLU(inplace=True)
+        super(DenseNet, self).__init__()
 
-        self.conv2 = nn.Conv2d(inplanes + growthrate, growthrate,
-                               kernel_size=3, padding=1)
-        self.bn2 = nn.BatchNorm2d(growthrate)
+        # First convolution
+        # Modified from the original DenseNet implementation to mimic Resnet settings on CIFAR
+        self.features = nn.Sequential(OrderedDict([
+            ('conv0', nn.Conv2d(3, num_init_features, kernel_size=3, stride=1,
+                                padding='same', bias=False)),
+            ('norm0', nn.BatchNorm2d(num_init_features)),
+            ('relu0', nn.ReLU(inplace=True))
+        ]))
 
-        self.block1 = nn.Sequential(self.conv1, self.bn1, self.relu)
-        self.block2 = nn.Sequential(self.conv2, self.bn2)
+        # Each denseblock
+        num_features = num_init_features
+        for i, num_layers in enumerate(block_config):
+            block = _DenseBlock(
+                num_layers=num_layers,
+                num_input_features=num_features,
+                bn_size=bn_size,
+                growth_rate=growth_rate
+            )
+            self.features.add_module('denseblock%d' % (i + 1), block)
+            num_features = num_features + num_layers * growth_rate
+            if i != len(block_config) - 1:
+                trans = _Transition(num_input_features=num_features,
+                                    num_output_features=num_features // 2)
+                self.features.add_module('transition%d' % (i + 1), trans)
+                num_features = num_features // 2
 
-    def forward(self, x: Tensor) -> Tensor:
-        identity = x
-        # Concatenate instead of adding.
-        out = torch.cat((self.block1(x), identity), 1)
-        out = torch.cat((self.block2(out), out), 1)
-        return self.relu(out)
+        # Final batch norm
+        self.features.add_module('norm5', nn.BatchNorm2d(num_features))
 
+        # Linear layer
+        self.classifier = nn.Linear(num_features, num_classes)
 
-class TransitionBlock(nn.Module):
-    """A transition block to reduce channels of [input + growthrate * n, w, h] to [new_input_channels, w, h]
+        # Official init from torch repo.
+        for m in self.modules():
+            if isinstance(m, nn.Conv2d):
+                nn.init.kaiming_normal_(m.weight)
+            elif isinstance(m, nn.BatchNorm2d):
+                nn.init.constant_(m.weight, 1)
+                nn.init.constant_(m.bias, 0)
+            elif isinstance(m, nn.Linear):
+                nn.init.constant_(m.bias, 0)
 
-    Attributes:
-        inplanes: # of Input channels
-        outplanes: # of Output channels
-    """
-
-    def __init__(self, inplanes, outplanes):
-        super().__init__()
-
-        self.conv1 = nn.Conv2d(inplanes, outplanes, stride=1, kernel_size=1)
-        self.avgpool = nn.AvgPool2d(kernel_size=2, stride=2)
-        self.transition = nn.Sequential(self.conv1, self.avgpool)
-
-    def forward(self, x: Tensor) -> Tensor:
-        return self.transition(x)
-
-
-class DenseNet(ModelABC):
-    """Defining the whole model. 
-    In high level: 
-        - Input -> [batch, 3, height, width]
-        - Beginning Layer -> [batch, 3, height, width]
-
-        - First Block: n*BasicBlock(16) -> [batch, 16 + 2n * growthrate, height, width]
-        - Transition: TransitionBlock(16 + 2n * growthrate, 32) -> [batch, 32, height, width]
-
-        - Second Block: n*BasicBlock(32) -> [batch, 32 + 2n * growthrate, height, width]
-        - Transition: TransitionBlock(32 + 2n * growthrate, 64) -> [batch, 32, height, width]
-
-        - Third Block: n*BasicBlock(64) -> [batch, 64 + 2n * growthrate, height, width]
-
-        - FinalLayer: AdaptiveAvgPool2d + Linear(64 + 2n * growthrate, num_classes)
-
-    Attributes:
-        model_n: # of layers, based on CIFAR-ResNet 
-        num_classes: Number of classes
-        device: needed for GPU vs CPU.
-    """
-
-    def __init__(self, model_n, num_classes: int = 10, device=torch.device("cpu")):
-        super().__init__()
-
-        self.residual_layers = nn.ModuleList([])
-        self.model_n = model_n
-        self.device = device
-
-        # begining layers
-        self.conv1 = nn.Conv2d(3, 16, kernel_size=3, stride=1, padding=1)
-        self.bn1 = nn.BatchNorm2d(16)
-        self.relu = nn.ReLU(inplace=True)
-
-        # ResNet blocks [16, 32, 64]
-        # first block, 16 channels
-        in_channels = 16
-        self.growthrate = 16
-        for i in range(self.model_n):
-            self.residual_layers.append(BasicBlock(
-                in_channels, self.growthrate).to(device))
-            in_channels += (self.growthrate * 2)
-            # Multiplying growthrate by 2 because each iteration adds two basic block layers.
-
-        # second block, 32 channels
-        new_in_channels = 32
-        self.growthrate = 32
-        for i in range(self.model_n):
-            if i == 0:
-                self.residual_layers.append(
-                    TransitionBlock(in_channels, new_in_channels).to(device))
-                in_channels = new_in_channels
-
-            else:
-                self.residual_layers.append(BasicBlock(
-                    in_channels, self.growthrate).to(device))
-                in_channels += (self.growthrate * 2)
-
-        # third block, 64 channels
-        new_in_channels = 64
-        self.growthrate = 64
-        for i in range(self.model_n):
-            if i == 0:
-                self.residual_layers.append(
-                    TransitionBlock(in_channels, new_in_channels).to(device))
-                in_channels = new_in_channels
-            else:
-                self.residual_layers.append(
-                    BasicBlock(in_channels, self.growthrate).to(device))
-                in_channels += (self.growthrate * 2)
-
-        # output layers
-        self.avgpool = nn.AdaptiveAvgPool2d((1, 1))
-        self.fc = nn.Linear(in_channels, num_classes)
-
-    def forward(self, x: Tensor) -> Tensor:
-        # begining layers
-        x = self.conv1(x)
-        x = self.bn1(x)
-        x = self.relu(x)
-
-        # ResNet blocks
-        for i, layer in enumerate(self.residual_layers):
-            x = layer(x)
-
-        # output layers
-        x = self.avgpool(x)
-        x = torch.flatten(x, 1)
-        x = self.fc(x)
-
-        return x
+    def forward(self, x):
+        features = self.features(x)
+        out = F.relu(features, inplace=True)
+        out = F.adaptive_avg_pool2d(out, (1, 1))
+        out = torch.flatten(out, 1)
+        out = self.classifier(out)
+        return out
