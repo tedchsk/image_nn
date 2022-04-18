@@ -11,7 +11,6 @@ from core.args import TrainingConfig
 from core.data_loader import data_loader_builder
 from core.logger.default import LoggerDefault
 from core.logger.logger_abc import LoggerABC
-from core.model.model_abc import ModelABC
 from core.model.resnet import ResNet
 
 SEED_FOR_FOLDS = [42, 124, 6124, 1235, 1265, 1734,

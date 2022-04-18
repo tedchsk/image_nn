@@ -1,6 +1,6 @@
 import typing
+import torch.nn as nn
 from typing import Any, Callable, Dict
-from core.model.model_abc import ModelABC
 import torchvision
 from os import PathLike
 from torch import optim
@@ -14,7 +14,7 @@ class TrainingConfig:
     """Class for training configuration"""
 
     # Model specific
-    get_model: Callable[..., ModelABC] = None
+    get_model: Callable[..., nn.Module] = None
     model_params: Dict[str, Any] = None
 
     # Data loader specific
