@@ -44,7 +44,7 @@ if __name__ == "__main__":
     model_names = ["DsNet", "ResNet", "DenseNet"]
 
     k_fold_n = 5
-    n_epochs = 100
+    n_epochs = 1
     # Put the k fold loop outside so that all the model will be run at least once.
     for k in range(5):
         for model_size in model_sizes:
