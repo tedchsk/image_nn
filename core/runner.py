@@ -12,6 +12,7 @@ from core.data_loader import data_loader_builder
 from core.logger.default import LoggerDefault
 from core.logger.logger_abc import LoggerABC
 from core.model.resnet import ResNet
+from torchsummary import summary
 
 SEED_FOR_FOLDS = [42, 124, 6124, 1235, 1265, 1734,
                   134, 16, 12, 61, 123, 643, 6143, 6413, 712, 1024, 612, 6124, 995, 12512, 16141236]
@@ -179,5 +180,7 @@ class Runner:
                 'test_time': np.round(time.time()-start_time, 5),
                 'test_loss': np.round(running_loss / dataset_size, 5),
                 'test_acc': np.round(running_corrects / dataset_size, 5),
+                'model_summary': str(summary(model))
             }
+
             return test_info

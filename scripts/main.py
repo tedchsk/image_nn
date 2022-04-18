@@ -52,8 +52,7 @@ if __name__ == "__main__":
             model_name = f"{model_name}_{model_size}_{batch_size}_{lr}"
             train_conf = TrainingConfig(
                 get_model=model,
-                model_params={"model_n": model_size,
-                              "device": device, "num_classes": 100},
+                model_params={"model_n": model_size, "device": device, "num_classes": 100},
                 dataset_builder=D.CIFAR100,
                 pipelines=transform,
                 test_pipelines=transform,
