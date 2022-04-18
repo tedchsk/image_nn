@@ -42,8 +42,8 @@ if __name__ == "__main__":
     model_sizes = [3, 8, 16]
     batch_sizes = [32, 128]
     learning_rates = [0.1, 0.01]
-    hyperparams_combinations = itertools.product(models, batch_sizes, learning_rates)
-    print(list(hyperparams_combinations))
+    hyperparams_combinations = itertools.product(models, model_sizes, batch_sizes, learning_rates)
+    # print(list(hyperparams_combinations))
 
     k_fold_n = 2
     n_epochs = 2
