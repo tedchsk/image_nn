@@ -49,7 +49,7 @@ if __name__ == "__main__":
     # Put the k fold loop outside so that all the model will be run at least once.
     for k in range(k_fold_n):
         for ((model, model_name), model_size, batch_size, lr) in hyperparams_combinations:
-            model_name = f"{model_name}_{model_size}"
+            model_name = f"{model_name}_{model_size}_{batch_size}_{lr}"
             train_conf = TrainingConfig(
                 get_model=model,
                 model_params={"model_n": model_size,
