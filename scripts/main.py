@@ -42,13 +42,14 @@ if __name__ == "__main__":
     models = [DSNet, ResNet, DenseNet]
     model_names = ["DsNet", "ResNet", "DenseNet"]
 
-    k_fold_n = 2
+    k_fold_n = 3
     n_epochs = 2
     # Put the k fold loop outside so that all the model will be run at least once.
     for k in range(k_fold_n):
         for model_size in model_sizes:
             for model, model_name in zip(models, model_names):
                 model_name = f"{model_name}_{model_size}"
+                print(k, model_size, model_name)
                 train_conf = TrainingConfig(
                     get_model=model,
                     model_params={"model_n": model_size,
@@ -66,5 +67,5 @@ if __name__ == "__main__":
                 )
 
             # Once done with one size, make report
-            # df = report(os.path.join("_results", now_str))
-            # print(df.head(100))
+            df = report(os.path.join("_results", now_str))
+            print(df.head(100))
