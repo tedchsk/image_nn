@@ -50,26 +50,26 @@ if __name__ == "__main__":
     # Put the k fold loop outside so that all the model will be run at least once.
     for k in range(k_fold_n):
         for (model, model_size, batch_size, lr) in hyperparams_combinations:
-                model_name = f"{model.name}_{model_size}"
-                print(k, model_size, model_name)
-                train_conf = TrainingConfig(
-                    get_model=model,
-                    model_params={"model_n": model_size,
-                                  "device": device, "num_classes": 100},
-                    dataset_builder=D.CIFAR100,
-                    pipelines=transform,
-                    test_pipelines=transform,
-                    k_fold=k_fold_n,
-                    kth_fold=k,
-                    lr=lr,
-                    batch_size=batch_size,
-                    n_early_stopping=-1,
-                    milestones=[int(0.5 * n_epochs), int(0.75 * n_epochs)],
-                    n_epochs=n_epochs,
-                    is_cuda=torch.cuda.is_available(),
-                    n_epochs_per_print=1
-                )
-                runner.run(train_conf, expname=model_name)
+            model_name = f"{model.name}_{model_size}"
+            print(k, model_size, model_name)
+            train_conf = TrainingConfig(
+                get_model=model,
+                model_params={"model_n": model_size,
+                              "device": device, "num_classes": 100},
+                dataset_builder=D.CIFAR100,
+                pipelines=transform,
+                test_pipelines=transform,
+                k_fold=k_fold_n,
+                kth_fold=k,
+                lr=lr,
+                batch_size=batch_size,
+                n_early_stopping=-1,
+                milestones=[int(0.5 * n_epochs), int(0.75 * n_epochs)],
+                n_epochs=n_epochs,
+                is_cuda=torch.cuda.is_available(),
+                n_epochs_per_print=1
+            )
+            runner.run(train_conf, expname=model_name)
 
             # Once done with one size, make report
             df = report(os.path.join("_results", now_str))
