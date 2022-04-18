@@ -116,6 +116,7 @@ class DSNet(nn.Module):
 
     def __init__(self, model_n, num_classes: int = 10, device=torch.device("cpu")):
         super().__init__()
+        self.name = "DsNet"
 
         self.residual_layers = nn.ModuleList([])
         self.model_n = model_n

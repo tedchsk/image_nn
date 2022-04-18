@@ -99,6 +99,7 @@ class DenseNet(nn.Module):
                  num_init_features=64, bn_size=4, num_classes=1000, device=None):
 
         super(DenseNet, self).__init__()
+        self.name = "DenseNet"
 
         # First convolution
         # Modified from the original DenseNet implementation to mimic Resnet settings on CIFAR
