@@ -66,5 +66,5 @@ if __name__ == "__main__":
                 )
 
             # Once done with one size, make report
-            df = report(os.path.join("_results", now_str))
-            print(df.head(100))
+            # df = report(os.path.join("_results", now_str))
+            # print(df.head(100))
