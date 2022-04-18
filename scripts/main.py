@@ -38,14 +38,14 @@ if __name__ == "__main__":
     print("Using GPU" if torch.cuda.is_available() else "Using CPU")
 
     # Grid Search parameters
-    models = [(ResNet, "ResNet"), (DSNet, "DsNet"), (DenseNet, "DenseNet")]
+    models = [(DSNet, "DsNet"), (DenseNet, "DenseNet"), (ResNet, "ResNet")]
     model_sizes = [3, 8, 16]
     batch_sizes = [32, 128]
     learning_rates = [0.1, 0.01]
     hyperparams_combinations = itertools.product(models, model_sizes, batch_sizes, learning_rates)
 
-    k_fold_n = 2
-    n_epochs = 2
+    k_fold_n = 5
+    n_epochs = 100
     # Put the k fold loop outside so that all the model will be run at least once.
     for k in range(k_fold_n):
         for ((model, model_name), model_size, batch_size, lr) in hyperparams_combinations:
