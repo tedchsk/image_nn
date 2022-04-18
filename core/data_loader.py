@@ -17,21 +17,10 @@ def data_loader_builder(
     )
     train_size = len(train_set)
 
-    train_set, validation_set = random_split(
-            train_set,
-            [
-                int(train_size*(1 - conf.valid_ratio)),
-                int(train_size*conf.valid_ratio),
-                ]
-            )
-
-    train_size = len(train_set)
-    validation_size = len(validation_set)
-
-    test_set = conf.dataset_builder(
-        root="data", train=False, download=True, transform=transform
-    )
+    test_set = conf.dataset_builder(root="data", train=False, download=True, transform=transform)
+    test_set, validation_set = random_split(test_set, [5000, 5000])  # NDHC
     test_size = len(test_set)
+    validation_size = len(validation_set)
 
     batch_size = conf.batch_size
     train_loader = DataLoader(train_set, batch_size, shuffle=True, pin_memory=True)

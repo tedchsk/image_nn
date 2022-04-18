@@ -1,3 +1,4 @@
+import torchvision
 import os
 from datetime import datetime
 import torch
@@ -12,7 +13,6 @@ from core.logger.report import report
 from core.model.big_resnet import *
 from core.model.densenet import DenseNet
 from core.model.dsnet import DSNet
-from core.model.model_abc import ModelABC
 from core.model.resnet import ResNet
 from core.runner import Runner
 import torchvision.datasets as D
@@ -23,11 +23,23 @@ if __name__ == "__main__":
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     runner = Runner(device=device, runname=now_str)
 
+    # Data loader
+    # dataset_builder, stats = D.CIFAR10, ((0.4914, 0.4822, 0.4465), (0.2023, 0.1994, 0.2010))
+    dataset_builder, stats = D.CIFAR100, ((0.507, 0.487, 0.441), (0.267, 0.256, 0.276))
+
+    transform = torchvision.transforms.Compose([
+        torchvision.transforms.ToTensor(),
+        torchvision.transforms.Normalize(*stats),
+        torchvision.transforms.RandomCrop(32, padding=4, padding_mode='constant'),
+        torchvision.transforms.RandomHorizontalFlip(p=0.5)
+        ])
+
+
     print("Using GPU" if torch.cuda.is_available() else "Using CPU")
 
     model_sizes = [3, 5, 7]
-    models = [ResNet, DenseNet, DSNet]
-    model_names = ["ResNet", "DenseNet", "DsNet"]
+    models = [DSNet, ResNet, DenseNet]
+    model_names = ["DsNet", "ResNet", "DenseNet"]
 
     k_fold_n = 5
     # Put the k fold loop outside so that all the model will be run at least once.
@@ -40,6 +52,8 @@ if __name__ == "__main__":
                     model_params={"model_n": model_size,
                                   "device": device, "num_classes": 100},
                     dataset_builder=D.CIFAR100,
+                    pipelines=transform,
+                    test_pipelines=transform,
                     k_fold=k_fold_n,
                     kth_fold=k,
                     n_early_stopping=-1,
