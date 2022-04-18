@@ -7,7 +7,6 @@ import torch.nn as nn
 import torch.optim as optim
 from core.args import TrainingConfig
 from core.data_loader import data_loader_builder
-from core.logger.default import LoggerDefault
 from core.logger.logger_abc import LoggerABC
 from core.logger.report import report
 from core.model.big_resnet import *
@@ -43,8 +42,8 @@ if __name__ == "__main__":
     models = [DSNet, ResNet, DenseNet]
     model_names = ["DsNet", "ResNet", "DenseNet"]
 
-    k_fold_n = 1
-    n_epochs = 3
+    k_fold_n = 2
+    n_epochs = 2
     # Put the k fold loop outside so that all the model will be run at least once.
     for k in range(k_fold_n):
         for model_size in model_sizes:
@@ -62,7 +61,8 @@ if __name__ == "__main__":
                     n_early_stopping=-1,
                     milestones=[int(0.5 * n_epochs), int(0.75 * n_epochs)],
                     n_epochs=n_epochs,
-                    is_cuda=torch.cuda.is_available()
+                    is_cuda=torch.cuda.is_available(),
+                    n_epochs_per_print=1
                 )
 
             # Once done with one size, make report
