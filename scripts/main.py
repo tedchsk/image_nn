@@ -37,11 +37,14 @@ if __name__ == "__main__":
 
     print("Using GPU" if torch.cuda.is_available() else "Using CPU")
 
-    model_sizes = [3, 5, 7]
+    model_sizes = [3, 8, 16]
+    batch_size = [32, 128]
+    lr = [0.1, 0.01]
     models = [DSNet, ResNet, DenseNet]
     model_names = ["DsNet", "ResNet", "DenseNet"]
 
     k_fold_n = 5
+    n_epochs = 100
     # Put the k fold loop outside so that all the model will be run at least once.
     for k in range(5):
         for model_size in model_sizes:
@@ -57,11 +60,10 @@ if __name__ == "__main__":
                     k_fold=k_fold_n,
                     kth_fold=k,
                     n_early_stopping=-1,
-                    milestones=[90, 135],
-                    n_epochs=180,
+                    milestones=[int(0.5 * n_epochs), int(0.75 * n_epochs)],
+                    n_epochs=n_epochs,
                     is_cuda=torch.cuda.is_available()
                 )
-                runner.run(train_conf, expname=model_name)
 
             # Once done with one size, make report
             df = report(os.path.join("_results", now_str))

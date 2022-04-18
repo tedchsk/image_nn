@@ -1,4 +1,4 @@
-# Implementation from (with modifications): 
+# Implementation from (with modifications):
 # https://github.com/pytorch/vision/blob/6db1569c89094cf23f3bc41f79275c45e9fcb3f3/torchvision/models/densenet.py#L126
 import torch
 import torch.nn as nn
@@ -7,6 +7,7 @@ import torch.nn.functional as F
 from torch import Tensor
 from collections import OrderedDict
 from typing import Type, Any, Callable, Union, List, Optional
+
 
 class _DenseLayer(nn.Module):
     def __init__(self, num_input_features, growth_rate, bn_size):
@@ -36,9 +37,9 @@ class _DenseLayer(nn.Module):
                 return True
         return False
 
-
     # torchscript does not yet support *args, so we overload method
     # allowing it to take either a List[Tensor] or single Tensor
+
     def forward(self, input):  # noqa: F811
         if isinstance(input, Tensor):
             prev_features = [input]
@@ -95,7 +96,7 @@ class DenseNet(nn.Module):
     """
 
     def __init__(self, growth_rate=32, block_config=(6, 12, 24, 16),
-                 num_init_features=64, bn_size=4, num_classes=1000):
+                 num_init_features=64, bn_size=4, num_classes=1000, device=None):
 
         super(DenseNet, self).__init__()
 
