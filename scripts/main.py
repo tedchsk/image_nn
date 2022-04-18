@@ -27,12 +27,12 @@ if __name__ == "__main__":
     # dataset_builder, stats = D.CIFAR10, ((0.4914, 0.4822, 0.4465), (0.2023, 0.1994, 0.2010))
     dataset_builder, stats = D.CIFAR100, ((0.507, 0.487, 0.441), (0.267, 0.256, 0.276))
 
-    transform = torchvision.transforms.Compose([
+    transform = [
         torchvision.transforms.ToTensor(),
         torchvision.transforms.Normalize(*stats),
         torchvision.transforms.RandomCrop(32, padding=4, padding_mode='constant'),
         torchvision.transforms.RandomHorizontalFlip(p=0.5)
-        ])
+        ]
 
 
     print("Using GPU" if torch.cuda.is_available() else "Using CPU")
