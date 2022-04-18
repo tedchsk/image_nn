@@ -42,7 +42,7 @@ if __name__ == "__main__":
     models = [DSNet, ResNet, DenseNet]
     model_names = ["DsNet", "ResNet", "DenseNet"]
 
-    k_fold_n = 3
+    k_fold_n = 2
     n_epochs = 2
     # Put the k fold loop outside so that all the model will be run at least once.
     for k in range(k_fold_n):
@@ -65,6 +65,7 @@ if __name__ == "__main__":
                     is_cuda=torch.cuda.is_available(),
                     n_epochs_per_print=1
                 )
+                runner.run(train_conf, expname=model_name)
 
             # Once done with one size, make report
             df = report(os.path.join("_results", now_str))
