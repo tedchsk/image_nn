@@ -43,10 +43,10 @@ if __name__ == "__main__":
     models = [DSNet, ResNet, DenseNet]
     model_names = ["DsNet", "ResNet", "DenseNet"]
 
-    k_fold_n = 5
+    k_fold_n = 1
     n_epochs = 3
     # Put the k fold loop outside so that all the model will be run at least once.
-    for k in range(5):
+    for k in range(k_fold_n):
         for model_size in model_sizes:
             for model, model_name in zip(models, model_names):
                 model_name = f"{model_name}_{model_size}"
