@@ -95,11 +95,12 @@ class DenseNet(nn.Module):
           but slower. Default: *False*. See `"paper" <https://arxiv.org/pdf/1707.06990.pdf>`_
     """
 
-    def __init__(self, growth_rate=32, block_config=(6, 12, 24, 16),
-                 num_init_features=64, bn_size=4, num_classes=1000, device=None):
+    def __init__(self, growth_rate=16, model_n=3, num_init_features=16, bn_size=2, num_classes=100, device=None):
 
         super(DenseNet, self).__init__()
         self.name = "DenseNet"
+
+        block_config=(2 * model_n, 2 * model_n, 2 * model_n)
 
         # First convolution
         # Modified from the original DenseNet implementation to mimic Resnet settings on CIFAR

@@ -38,7 +38,7 @@ if __name__ == "__main__":
     print("Using GPU" if torch.cuda.is_available() else "Using CPU")
 
     # Grid Search parameters
-    models = [(DSNet, "DsNet"), (ResNet, "ResNet"), (DenseNet, "DenseNet")]
+    models = [(DenseNet, "DenseNet"), (DSNet, "DsNet"), (ResNet, "ResNet")]
     batch_sizes = [32, 128]
     learning_rates = [0.1, 0.01]
     model_size = 3
