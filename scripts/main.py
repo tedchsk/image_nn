@@ -64,7 +64,8 @@ if __name__ == "__main__":
                 milestones=[int(0.5 * n_epochs), int(0.75 * n_epochs)],
                 n_epochs=n_epochs,
                 is_cuda=torch.cuda.is_available(),
-                n_epochs_per_print=1
+                n_epochs_per_print=1,
+                name=model_name
             )
             runner.run(train_conf)
 
