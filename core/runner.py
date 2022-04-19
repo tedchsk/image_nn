@@ -27,8 +27,8 @@ class Runner:
             self,
             train_conf: TrainingConfig,
     ):
-        print(f"Start training process of exp: {expname}")
         expname = train_conf.name
+        print(f"Start training process of exp: {expname}")
 
         data_loaders, dataset_sizes = data_loader_builder(train_conf)
 
