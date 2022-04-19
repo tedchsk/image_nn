@@ -26,9 +26,9 @@ class Runner:
     def run(
             self,
             train_conf: TrainingConfig,
-            expname: str = "untitled"  # Different for each configuration
     ):
         print(f"Start training process of exp: {expname}")
+        expname = train_conf.name
 
         data_loaders, dataset_sizes = data_loader_builder(train_conf)
 
