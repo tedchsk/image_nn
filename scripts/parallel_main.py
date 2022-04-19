@@ -78,7 +78,7 @@ if __name__ == "__main__":
     pool = mp.Pool(mp.cpu_count())
 
     # Step 2: `pool.apply` the `howmany_within_range()`
-    results = [pool.apply(runner.run, args=(train_conf)) for train_conf in jobs]
+    results = [pool.apply(runner.run, args=(train_conf, )) for train_conf in jobs]
 
     # Step 3: Don't forget to close
     pool.close()
