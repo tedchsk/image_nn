@@ -66,7 +66,7 @@ if __name__ == "__main__":
                 is_cuda=torch.cuda.is_available(),
                 n_epochs_per_print=1
             )
-            runner.run(train_conf, expname=model_name)
+            runner.run(train_conf)
 
             # Once done with one size, make report
             df = report(os.path.join("_results", now_str))
