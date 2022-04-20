@@ -167,3 +167,11 @@ cython_debug/
 #.idea/
 #
 graph.png
+
+notebooks/maryam_result
+notebooks/CIFAR10_results.csv
+notebooks/Report Visualization.ipynb
+report_2/1_different_models.png
+report_graphs/Maryam_versions
+report_graphs
+train_confidence_bounds.ipynb

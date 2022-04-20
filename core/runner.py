@@ -176,7 +176,7 @@ class Runner:
 
             # Visualize the loss and accuracy values.
             test_info = {
-                'test_time': np.round(time.time()-start_time, 5),
+                'test_time': np.round(time.time() - start_time, 5),
                 'test_loss': np.round(running_loss / dataset_size, 5),
                 'test_acc': np.round(running_corrects / dataset_size, 5)
             }
