@@ -1,4 +1,4 @@
-## A Deeper Look into Dense Shortcut Nets
+# A Deeper Look into Dense Shortcut Nets
 
 In this project, we will further investigate a recent shortcut-connection model that
 tries to combine the advantages of ResNet with those of DenseNet. Specifically, it
