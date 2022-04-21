@@ -33,7 +33,7 @@ After successfully setting up python environment, use this command to start the 
 
 ```bash
 $ python scripts/main.py
-'''
+```
 
 ![train sample](images/code_train_sample.png)
 
