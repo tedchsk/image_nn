@@ -134,7 +134,7 @@ classDiagram
   
 ### Experimentation (high-level)
 
-"A experiment" is defined as a one running flow with fixed data, model, hyperparameters.
+"An experiment" is defined as a one running flow with fixed data, model, hyperparameters.
 
 A combination of these "experiments" is called "run". Most of the time, we want to run multiple experiment settings (e.g., ResNet vs DenseNet vs DsNet) to compare the result between the three experiments. 
 
