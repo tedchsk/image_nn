@@ -37,7 +37,7 @@ $ python scripts/main.py
 
 ![train sample](images/code_train_sample.png)
 
-Use this command below to see the summary of losses and accuracies of all the models. The training process log the training once each model finished the training, so all the training that has done training will be seen here.
+Use this command to see the summary of losses and accuracies of all the models. The training process logs the training once each model finishes the training, so all the finished training models will be shown here.
 
 ```bash
 $ python scripts/report.py
