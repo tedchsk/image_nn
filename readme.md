@@ -7,39 +7,27 @@ as low as ResNet. We will try out alternative shortcut connections, different
 backbone structures, extend the ablation studies done in the paper, and experiment
 with the model’s performance in a more diverse set of datasets.
 
+![model structures](./model_structures.png)
+
 ---
 
-### Ways to run the code
-
-##### Through Jupyter Notebook
-
-I have set a Jupyter Notebook on Google Cloud Engine. You can access it here [[Link](http://35.204.111.135:8888/tree/_notebooks)]
-
-Two important notebooks to checkout
-1. Training Control Panel [[Link](http://35.204.111.135:8888/notebooks/_notebooks/Training%20Control%20Panel.ipynb)] - a code taken from main.py for convenience. Specify the argument and run the notebook to train the whole experiment flow. 
-2. Training Logs Dashboard [[Link](http://35.204.111.135:8888/notebooks/_notebooks/Training%20Logs%20Dashboard.ipynb)] - Code to view the logs logged by the training flow, containing -
-    - summarized test errors for each model 
-    - losses & accuracies at each epoch as graph 
-
-Feel free to add your own in **"_notebooks"** folder
-
-**Note**: the underscore "_" is used for git to ignore these folders.
-
-#### Through your own local machines or environment
+### Installation
 - Make sure you have conda in your local machine, then follow the steps below.
 
 ```bash
 # From the project root directory ...
-$ make envload # which is equivalent to the line below.
+$ make envload # (which is equivalent to the line below.)
 $ conda env create --name python39 --file environment.yml
 
 $ conda activate python39
 $ pip install -e . # so that conda sees the project's code.
+
+$ pytest # run tests
 ```
 
 ---
 
-### Code Structures
+### Code High-Level
 
 ```mermaid
 classDiagram
