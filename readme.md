@@ -35,6 +35,8 @@ After successfully setting up python environment, use this command to start the 
 $ python scripts/main.py
 '''
 
+![train sample](images/code_train_sample.png)
+
 Once the training is done, use the command below to see the summary of losses and accuracies of all the models.
 
 ```bash
