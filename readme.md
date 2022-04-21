@@ -7,7 +7,7 @@ as low as ResNet. We will try out alternative shortcut connections, different
 backbone structures, extend the ablation studies done in the paper, and experiment
 with the model’s performance in a more diverse set of datasets.
 
-![model structures](./model_structures.png)
+![model structures](images/model_structures.png)
 
 ---
 
