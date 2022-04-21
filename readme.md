@@ -27,6 +27,50 @@ $ pytest # run tests
 
 ---
 
+### Usage 
+
+After successfully setting up python environment, use this command to start the training.
+
+```bash
+$ python scripts/main.py
+'''
+
+Once the training is done, use the command below to see the summary of losses and accuracies of all the models.
+
+```bash
+$ python scripts/report.py
+```
+
+![report sample](images/code_report_sample.png)
+
+---
+  
+### Experimentation (high-level)
+
+All the training configuration is in [scripts/main.py](./scripts/main.py) file. 
+You can edit the set of configurations you want to train your model on there.
+
+** Terms **
+"An experiment" is defined as a one running flow with fixed data, model, hyperparameters.
+
+A combination of these "experiments" is called "run". Most of the time, we want to run multiple experiment settings (e.g., ResNet vs DenseNet vs DsNet) to compare the result between the three experiments. 
+
+`main.py` specifies a "run" setting, consisting of multiple experiments, then executes them. Then, for each experiment, the code log the result as a folder in this format  `"$PROJECT/_results/{RUN_NAME}/{EXP_NAME}/{KFOLD}"`   
+
+**Specifiable configurations for the experiment**  
+    - Data loader (CIFAR10? CIFAR100, [other built-in datasets](https://pytorch.org/vision/stable/datasets.html#built-in-datasets))  
+    - Data transform policy (padding, horizontal flip?)  
+    - Model (ResNet, DenseNet, DSNet, or write your own)  
+    - Other hyperparameters (n_epochs, optimizer, learning rate, gamma)  
+    
+**Utilities from the training process**  
+    1. Training/Validation metrices (losses, acc, time in seconds) for each epoch  
+    2. Training/Validation/Test metrices at the end of training  
+**Result visualization**  
+    - Follow this notebook on how to visualize the training result [[Link](https://github.com/teerapat-ch/image_nn/blob/master/notebooks/Report%20Visualization%20-%20ResNet%20vs%20DsNet%20vs%20DenseNet.ipynb)]
+
+---
+
 ### Code High-Level
 
 ```mermaid
@@ -119,32 +163,11 @@ classDiagram
   ```
   
 ---
-  
-### Experimentation (high-level)
-
-"An experiment" is defined as a one running flow with fixed data, model, hyperparameters.
-
-A combination of these "experiments" is called "run". Most of the time, we want to run multiple experiment settings (e.g., ResNet vs DenseNet vs DsNet) to compare the result between the three experiments. 
-
-`main.py` specifies a "run" setting, consisting of multiple experiments, then executes them. Then, for each experiment, the code log the result as a folder in this format  `"$PROJECT/_results/{RUN_NAME}/{EXP_NAME}/{KFOLD}"`   
-
-**Main thing you'll be specifying for each experiment**  
-    - Data loader (CIFAR10? CIFAR100, [other built-in datasets](https://pytorch.org/vision/stable/datasets.html#built-in-datasets))  
-    - Data transform policy (padding, horizontal flip?)  
-    - Model (ResNet, DenseNet, DSNet, or write your own)  
-    - Other hyperparameters (n_epochs, optimizer, learning rate, gamma)  
-    
-**What the code will provide**  
-    1. Training/Validation metrices (losses, acc, time in seconds) for each epoch  
-    2. Training/Validation/Test metrices at the end of training  
-    - These will be stored in the folder 
-**Result visualization**  
-    - Follow this notebook on how to visualize the training result [[Link](http://35.204.111.135:8888/notebooks/_notebooks/Training%20Logs%20Dashboard.ipynb)]
-
----
 
 ### Installation Notes on GCP
 (GCP -> Google Cloud Platform).  
+
+This project is trained on Google Cloud Platform. Here are links that might help you along the environment setup.
 
 - Nvidia drivers: [[Link](https://cloud.google.com/compute/docs/gpus/install-drivers-gpu)]  
 - Jupyter on GCP: [[Link](https://towardsdatascience.com/running-jupyter-notebook-in-google-cloud-platform-in-15-min-61e16da34d52)]  
