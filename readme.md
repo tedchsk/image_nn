@@ -52,20 +52,17 @@ $ python scripts/report.py
 All the training configuration is in [scripts/main.py](./scripts/main.py) file. 
 You can edit the set of configurations you want to train your model on there.
 
-** Terms **
-"An experiment" is defined as a one running flow with fixed data, model, hyperparameters.
+Each configuration specifies the dataset and the cleaning process, model and its hyperparameters, and other training process related hyperparameters. Mainly, you want to specify a list of configurations and compare their results.. For instance, experimenting on ResNet vs. DenseNet vs. DsNet consists can be thought of three configurations.
 
-A combination of these "experiments" is called "run". Most of the time, we want to run multiple experiment settings (e.g., ResNet vs DenseNet vs DsNet) to compare the result between the three experiments. 
+The runner runs the configuration list defined in `main.py` and report the training, validation, and testing set errors and losses between the experiments. For each configuration, the code log the result as a folder in this format  `"$PROJECT/_results/{RUN_NAME}/{CONFIGURATION_NAME}/{KFOLD}"`   
 
-`main.py` specifies a "run" setting, consisting of multiple experiments, then executes them. Then, for each experiment, the code log the result as a folder in this format  `"$PROJECT/_results/{RUN_NAME}/{EXP_NAME}/{KFOLD}"`   
-
-**Specifiable configurations for the experiment**  
-    - Data loader (CIFAR10? CIFAR100, [other built-in datasets](https://pytorch.org/vision/stable/datasets.html#built-in-datasets))  
+**Specifiable configurations**  
+    - Dataset (CIFAR10? CIFAR100, [other built-in datasets](https://pytorch.org/vision/stable/datasets.html#built-in-datasets))  
     - Data transform policy (padding, horizontal flip?)  
-    - Model (ResNet, DenseNet, DSNet, or write your own)  
+    - Model (ResNet, DenseNet, DSNet, or write your own + model sizes)  
     - Other hyperparameters (n_epochs, optimizer, learning rate, gamma)  
     
-**Utilities from the training process**  
+**What the code provides**  
     1. Training/Validation metrices (losses, acc, time in seconds) for each epoch  
     2. Training/Validation/Test metrices at the end of training  
 **Result visualization**  
@@ -166,13 +163,10 @@ classDiagram
   
 ---
 
-### Installation Notes on GCP
-(GCP -> Google Cloud Platform).  
+### Installation Notes on Google Cloud Platform (GCP)
 
-This project is trained on Google Cloud Platform. Here are links that might help you along the environment setup.
+This project is trained on GCP. Here are links that might help you along the environment setup process.
 
-- Nvidia drivers: [[Link](https://cloud.google.com/compute/docs/gpus/install-drivers-gpu)]  
+- Installing Nvidia drivers on GCP: [[Link](https://cloud.google.com/compute/docs/gpus/install-drivers-gpu)]  
 - Jupyter on GCP: [[Link](https://towardsdatascience.com/running-jupyter-notebook-in-google-cloud-platform-in-15-min-61e16da34d52)]  
-- Add conda env to Jupyter: [[Link](https://medium.com/@nrk25693/how-to-add-your-conda-environment-to-your-jupyter-notebook-in-just-4-steps-abeab8b8d084)]  
-
-
+- Adding conda env to Jupyter: [[Link](https://medium.com/@nrk25693/how-to-add-your-conda-environment-to-your-jupyter-notebook-in-just-4-steps-abeab8b8d084)]  
