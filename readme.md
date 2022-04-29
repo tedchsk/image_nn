@@ -23,7 +23,7 @@ $ conda activate image_nn
 ```
 Now, install pytorch version 1.11. If you are on a linux-based machine with CUDA 11.3, you can use:
 ```bash
-conda install pytorch torchvision torchaudio cudatoolkit=11.3 -c pytorch
+$ conda install pytorch torchvision torchaudio cudatoolkit=11.3 -c pytorch
 ```
 
 And finally run the following to test your installation:
