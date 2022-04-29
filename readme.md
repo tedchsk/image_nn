@@ -52,7 +52,7 @@ $ python scripts/report.py
 All the training configuration is in [scripts/main.py](./scripts/main.py) file. 
 You can edit the set of configurations you want to train your model on there.
 
-Each configuration specifies the dataset and the cleaning process, model and its hyperparameters, and other training process related hyperparameters. Mainly, you want to specify a list of configurations and compare their results.. For instance, experimenting on ResNet vs. DenseNet vs. DsNet consists can be thought of three configurations.
+Each configuration specifies the dataset and the cleaning process, model and its hyperparameters, and other training process related hyperparameters. Mainly, you want to specify a list of configurations and compare their results. For instance, experimenting on ResNet vs. DenseNet vs. DsNet consists can be thought of three configurations.
 
 The runner runs the configuration list defined in `main.py` and report the training, validation, and testing set errors and losses between the experiments. For each configuration, the code log the result as a folder in this format  `"$PROJECT/_results/{RUN_NAME}/{CONFIGURATION_NAME}/{KFOLD}"`   
 
