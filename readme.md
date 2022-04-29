@@ -17,9 +17,9 @@ with the model’s performance in a more diverse set of datasets.
 
 ```bash
 # create conda envirnoment from environment.yml
-$ conda env create --name python39 --file environment.yml
+$ conda env create --name image_nn --file environment.yml
 # Activate the created environment
-$ conda activate python39
+$ conda activate image_nn
 ```
 Now, install pytorch version 1.11. If you are on a linux-based machine with CUDA 11.3, you can use:
 ```bash
