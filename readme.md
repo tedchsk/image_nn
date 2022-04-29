@@ -15,14 +15,14 @@ with the model’s performance in a more diverse set of datasets.
 - Make sure you have conda in your local machine, then follow the steps below.
 
 ```bash
-# From the project root directory ...
-$ make envload # (which is equivalent to the line below.)
+# From the project root directory, create conda envirnoment from environment.yml
 $ conda env create --name python39 --file environment.yml
-
+# Activate the created environment
 $ conda activate python39
-$ pip install -e . # so that conda sees the project's code.
-
-$ pytest # run tests
+# Set current project path as executable so that conda environment uses the project code.
+$ pip install -e .
+# All tests should passed if the environment installation is complete.
+$ pytest 
 ```
 
 ---
