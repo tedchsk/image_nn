@@ -8,9 +8,10 @@ indeed signficantly better than ResNets, but only if the model size is large eno
 We also test the effect of different hyperparameters and provide a guideline on
 when to use each model based on memory and time requirements.
 
+You can read our full report [here](report.pdf)
+
 ![model structures](images/model_structures.png)
 
-You can read our full report [here](report.pdf)
 
 ---
 
@@ -50,8 +51,11 @@ $ python scripts/report.py
 ![report sample](images/code_report_sample.png)
 
 ---
-  
 
+### Reproducing Experiments
+
+To reproduce the experiments, you can run the files inside the `experiments` folder. Each experiment has its own corresponding file. The only exception is experiment 4.5 which was hard to put inside a single python file as the process to produce the results required multiple runs and reading things from the logs. 
+  
 ### Code High-Level
 
 ```mermaid
