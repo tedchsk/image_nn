@@ -24,9 +24,10 @@ if __name__ == "__main__":
     runner = Runner(device=device, runname=now_str)
 
     # Data loader
-    # dataset_builder, stats = D.CIFAR10, ((0.4914, 0.4822, 0.4465), (0.2023, 0.1994, 0.2010))
-    dataset_builder, stats = D.CIFAR100, ((
-        0.507, 0.487, 0.441), (0.267, 0.256, 0.276))
+    dataset_builder, stats = D.CIFAR10, ((
+        0.4914, 0.4822, 0.4465), (0.2023, 0.1994, 0.2010))
+    # dataset_builder, stats = D.CIFAR100, ((
+    # 0.507, 0.487, 0.441), (0.267, 0.256, 0.276))
 
     transform = [
         torchvision.transforms.ToTensor(),
@@ -56,7 +57,7 @@ if __name__ == "__main__":
                 get_model=model,
                 model_params={"model_n": model_size,
                               "device": device, "num_classes": 10},
-                dataset_builder=D.CIFAR10,
+                dataset_builder=dataset_builder,
                 pipelines=transform,
                 test_pipelines=transform,
                 k_fold=k_fold_n,
