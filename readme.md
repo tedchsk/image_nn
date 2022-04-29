@@ -17,21 +17,21 @@ with the model’s performance in a more diverse set of datasets.
 
 ```bash
 # create conda envirnoment from environment.yml
-$ conda env create --name image_nn --file environment.yml
+conda env create --name image_nn --file environment.yml
 # Activate the created environment
-$ conda activate image_nn
+conda activate image_nn
 ```
 Now, install pytorch version 1.11. If you are on a linux-based machine with CUDA 11.3, you can use:
 ```bash
-$ conda install pytorch torchvision torchaudio cudatoolkit=11.3 -c pytorch
+conda install pytorch torchvision torchaudio cudatoolkit=11.3 -c pytorch
 ```
 
 And finally run the following to test your installation:
 ```bash
 # Set current project path as executable so that conda environment uses the project code.
-$ pip install -e .
+pip install -e .
 # All tests should passed if the environment installation is complete.
-$ pytest 
+pytest 
 ```
 
 ---
@@ -41,7 +41,7 @@ $ pytest
 After successfully setting up python environment, use this command to start the training.
 
 ```bash
-$ python scripts/main.py
+python scripts/main.py
 ```
 
 ![train sample](images/code_train_sample.png)
@@ -49,7 +49,7 @@ $ python scripts/main.py
 Use this command to see the summary of losses and accuracies of all the models. The training process logs the training once each model finishes the training, so all the finished training models will be shown here.
 
 ```bash
-$ python scripts/report.py
+python scripts/report.py
 ```
 
 ![report sample](images/code_report_sample.png)
