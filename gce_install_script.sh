@@ -18,8 +18,8 @@ source ~/.bashrc
 
 
 echo "Setting up project"
-# Continue from here
-make envload
+# If conda is not found, activate it manually and continue from here.
+conda env create --name python39 --file environment.yml
 conda activate python39
 # conda install pytorch torchvision cudatoolkit=11.3 -c pytorch
 pip install -e .
