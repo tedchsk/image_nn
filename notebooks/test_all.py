@@ -1,7 +1,7 @@
 # from ResNet import ResNet
 # from DenseNet import DenseNet
 # from DSNet import DSNet
-from models import ResNet, DenseNet, DSNet
+from model import ResNet, DenseNet, DSNet
 
 def test_ResNet():
     model = ResNet(model_n=3, num_classes=100, device="cpu")
