@@ -48,28 +48,6 @@ $ python scripts/report.py
 
 ---
   
-### Experimentation (high-level)
-
-All the training configuration is in [scripts/main.py](./scripts/main.py) file. 
-You can edit the set of configurations you want to train your model on there.
-
-Each configuration specifies the dataset and the cleaning process, model and its hyperparameters, and other training process related hyperparameters. Mainly, you want to specify a list of configurations and compare their results. For instance, experimenting on ResNet vs. DenseNet vs. DsNet consists can be thought of three configurations.
-
-The runner runs the configuration list defined in `main.py` and report the training, validation, and testing set errors and losses between the experiments. For each configuration, the code log the result as a folder in this format  `"$PROJECT/_results/{RUN_NAME}/{CONFIGURATION_NAME}/{KFOLD}"`   
-
-**Specifiable configurations**  
-    - Dataset (CIFAR10? CIFAR100, [other built-in datasets](https://pytorch.org/vision/stable/datasets.html#built-in-datasets))  
-    - Data transform policy (padding, horizontal flip?)  
-    - Model (ResNet, DenseNet, DSNet, or write your own + model sizes)  
-    - Other hyperparameters (n_epochs, optimizer, learning rate, gamma)  
-    
-**What the code provides**  
-    1. Training/Validation metrices (losses, acc, time in seconds) for each epoch  
-    2. Training/Validation/Test metrices at the end of training  
-**Result visualization**  
-    - Follow this notebook on how to visualize the training result [[Link](https://github.com/teerapat-ch/image_nn/blob/master/notebooks/Report%20Visualization%20-%20ResNet%20vs%20DsNet%20vs%20DenseNet.ipynb)]
-
----
 
 ### Code High-Level
 
