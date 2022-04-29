@@ -20,6 +20,14 @@ with the model’s performance in a more diverse set of datasets.
 $ conda env create --name python39 --file environment.yml
 # Activate the created environment
 $ conda activate python39
+```
+Now, install pytorch version 1.11. If you are on a linux-based machine with CUDA 11.3, you can use:
+```bash
+conda install pytorch torchvision torchaudio cudatoolkit=11.3 -c pytorch
+```
+
+And finally run the following to test your installation:
+```bash
 # Set current project path as executable so that conda environment uses the project code.
 $ pip install -e .
 # All tests should passed if the environment installation is complete.
