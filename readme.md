@@ -62,7 +62,9 @@ python scripts/report.py
 
 ### Reproducing Experiments
 
-To reproduce the experiments, you can run the files inside the `experiments` folder. Each experiment has its own corresponding file. The only exception is experiment 4.5 which was hard to put inside a single python file as the process to produce the results required multiple runs and reading things from the logs. 
+To reproduce the experiments, you can run the files inside the `experiments` folder. Each experiment has its own corresponding file.
+
+The only exception is experiment 4.5 which was hard to put inside a single python file as the process to produce the results required multiple runs and reading things from the logs. You can find the notebook used for experiment 4.5 [here](notebooks/find_model_mem_use_params.ipynb).
   
 ### Code High-Level
 
