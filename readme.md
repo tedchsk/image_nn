@@ -1,13 +1,16 @@
 # A Deeper Look into Dense Shortcut Nets
 
-In this project, we further investigate a recent shortcut-connection model that
-tries to combine the advantages of ResNet with those of DenseNet. Specifically, it
-tries to achieve DenseNet’s high performance, while keeping the memory footprint
-as low as ResNet. We will try out alternative shortcut connections, different
-backbone structures, extend the ablation studies done in the paper, and experiment
-with the model’s performance in a more diverse set of datasets.
+DenseNets have demonstrated superior performance on vision tasks, but have a
+much higher memory footprint than ResNets. DSNets claim to have solved this
+trade-off. In this paper, we will take a deeper look at this architecture and compare
+it side-by-side to the other two in multiple experiments. We find that DSNets are
+indeed signficantly better than ResNets, but only if the model size is large enough.
+We also test the effect of different hyperparameters and provide a guideline on
+when to use each model based on memory and time requirements.
 
 ![model structures](images/model_structures.png)
+
+You can read our full report [here](report.pdf)
 
 ---
 
