@@ -1,13 +1,17 @@
 # A Deeper Look into Dense Shortcut Nets
 
-In this project, we further investigate a recent shortcut-connection model that
-tries to combine the advantages of ResNet with those of DenseNet. Specifically, it
-tries to achieve DenseNet’s high performance, while keeping the memory footprint
-as low as ResNet. We will try out alternative shortcut connections, different
-backbone structures, extend the ablation studies done in the paper, and experiment
-with the model’s performance in a more diverse set of datasets.
+DenseNets have demonstrated superior performance on vision tasks, but have a
+much higher memory footprint than ResNets. DSNets claim to have solved this
+trade-off. In this paper, we will take a deeper look at this architecture and compare
+it side-by-side to the other two in multiple experiments. We find that DSNets are
+indeed signficantly better than ResNets, but only if the model size is large enough.
+We also test the effect of different hyperparameters and provide a guideline on
+when to use each model based on memory and time requirements.
+
+You can read our full report [here](report.pdf)
 
 ![model structures](images/model_structures.png)
+
 
 ---
 
@@ -55,30 +59,11 @@ python scripts/report.py
 ![report sample](images/code_report_sample.png)
 
 ---
+
+### Reproducing Experiments
+
+To reproduce the experiments, you can run the files inside the `experiments` folder. Each experiment has its own corresponding file. The only exception is experiment 4.5 which was hard to put inside a single python file as the process to produce the results required multiple runs and reading things from the logs. 
   
-### Experimentation (high-level)
-
-All the training configuration is in [scripts/main.py](./scripts/main.py) file. 
-You can edit the set of configurations you want to train your model on there.
-
-Each configuration specifies the dataset and the cleaning process, model and its hyperparameters, and other training process related hyperparameters. Mainly, you want to specify a list of configurations and compare their results. For instance, experimenting on ResNet vs. DenseNet vs. DsNet consists can be thought of three configurations.
-
-The runner runs the configuration list defined in `main.py` and report the training, validation, and testing set errors and losses between the experiments. For each configuration, the code log the result as a folder in this format  `"$PROJECT/_results/{RUN_NAME}/{CONFIGURATION_NAME}/{KFOLD}"`   
-
-**Specifiable configurations**  
-    - Dataset (CIFAR10? CIFAR100, [other built-in datasets](https://pytorch.org/vision/stable/datasets.html#built-in-datasets))  
-    - Data transform policy (padding, horizontal flip?)  
-    - Model (ResNet, DenseNet, DSNet, or write your own + model sizes)  
-    - Other hyperparameters (n_epochs, optimizer, learning rate, gamma)  
-    
-**What the code provides**  
-    1. Training/Validation metrices (losses, acc, time in seconds) for each epoch  
-    2. Training/Validation/Test metrices at the end of training  
-**Result visualization**  
-    - Follow this notebook on how to visualize the training result [[Link](https://github.com/teerapat-ch/image_nn/blob/master/notebooks/Report%20Visualization%20-%20ResNet%20vs%20DsNet%20vs%20DenseNet.ipynb)]
-
----
-
 ### Code High-Level
 
 ```mermaid
