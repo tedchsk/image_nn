@@ -13,9 +13,10 @@ with the model’s performance in a more diverse set of datasets.
 
 ### Installation
 - Make sure you have conda in your local machine, then follow the steps below.
+- Make sure you are in the project root directory.
 
 ```bash
-# From the project root directory, create conda envirnoment from environment.yml
+# create conda envirnoment from environment.yml
 $ conda env create --name python39 --file environment.yml
 # Activate the created environment
 $ conda activate python39
