@@ -86,7 +86,7 @@ This project is trained on GCP. Here are links that might help you along the env
   * being a part of experiments (model_n experiment with CIFAR100)
   * being a part of writing the report and editing
 
-* **Teerapat Chaiwachirasak** - [teerapat-ch](https://github.com/teerapat-ch)
+* **Teerapat Chaiwachirasak** - [tedchsk](https://github.com/tedchsk)
   * Initial implementation of DenseNet and DSNet.
   * Train and collect experiment results on part of comparison among the three models (ResNet vs. DSNet vs. DenseNet).
   * Hyper-parameters grid search on DSNet, and DSNet performance on CIFAR-10 vs. CIFAR100
